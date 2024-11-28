@@ -1,6 +1,9 @@
+import 'package:blood_donation_app/registerPage.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatelessWidget {
+  const LoginPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -12,9 +15,9 @@ class LoginPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                SizedBox(height: 40),
+                const SizedBox(height: 40),
                 // Welcome Text
-                Text(
+                const Text(
                   'Welcome Donators',
                   textAlign: TextAlign.center,
                   style: TextStyle(
@@ -23,20 +26,20 @@ class LoginPage extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 8),
-                Text(
+                const SizedBox(height: 8),
+                const Text(
                   'Login or Sign up to access your account',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontWeight: FontWeight.w500,
                     fontFamily: 'Poppins', // Added font family
                     fontSize: 14,
-                    color: const Color.fromARGB(203, 0, 0, 0),
+                    color: Color.fromARGB(203, 0, 0, 0),
                   ),
                 ),
-                SizedBox(height: 40),
+                const SizedBox(height: 40),
                 // Login Section
-                Text(
+                const Text(
                   'Login',
                   textAlign: TextAlign.center,
                   style: TextStyle(
@@ -45,13 +48,13 @@ class LoginPage extends StatelessWidget {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 // NIC Number Input
                 buildInputField(
                   labelText: 'NIC Number',
                   icon: Icons.badge,
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 // Password Input
                 buildInputField(
                   labelText: 'Password',
@@ -59,7 +62,7 @@ class LoginPage extends StatelessWidget {
                   obscureText: true,
                   suffixIcon: Icons.visibility_off,
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 // Forgot Password
                 Align(
                   alignment: Alignment.centerRight,
@@ -67,18 +70,18 @@ class LoginPage extends StatelessWidget {
                     onTap: () {
                       // Forgot Password action
                     },
-                    child: Text(
+                    child: const Text(
                       'Forgot Password',
                       style: TextStyle(
                         fontFamily: 'Poppins', // Added font family
                         fontWeight: FontWeight.w500,
                         fontSize: 12,
-                        color: const Color(0xFFD60030),
+                        color: Color(0xFFD60030),
                       ),
                     ),
                   ),
                 ),
-                SizedBox(height: 32),
+                const SizedBox(height: 32),
                 // Login Button with Hover and Click Effects
                 MouseRegion(
                   onEnter: (_) {
@@ -96,22 +99,26 @@ class LoginPage extends StatelessWidget {
                     },
                     onTap: () {
                       // Handle button click
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => const RegisterPage()),
+                      );
                     },
                     child: AnimatedContainer(
-                      duration: Duration(milliseconds: 200),
+                      duration: const Duration(milliseconds: 200),
                       height: 56,
                       decoration: BoxDecoration(
-                        color: Color(0xFFD60030),
+                        color: const Color(0xFFD60030),
                         borderRadius: BorderRadius.circular(8),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(0.2),
-                            offset: Offset(0, 4),
+                            offset: const Offset(0, 4),
                             blurRadius: 4,
                           ),
                         ],
                       ),
-                      child: Center(
+                      child: const Center(
                         child: Text(
                           'Login',
                           style: TextStyle(
@@ -125,18 +132,18 @@ class LoginPage extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 // Create Account Section
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Flexible(
+                    const Flexible(
                       child: Text(
                         'Don’t have an account yet? ',
                         style: TextStyle(
                           fontFamily: 'Poppins', // Added font family
                           fontSize: 12,
-                          color: const Color(0xFFD60030),
+                          color: Color(0xFFD60030),
                         ),
                       ),
                     ),
@@ -144,7 +151,7 @@ class LoginPage extends StatelessWidget {
                       onTap: () {
                         // Navigate to Create Account Page
                       },
-                      child: Text(
+                      child: const Text(
                         'Create one',
                         style: TextStyle(
                           fontFamily: 'Poppins', // Added font family
@@ -156,15 +163,15 @@ class LoginPage extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 54),
+                const SizedBox(height: 54),
                 // Terms and Privacy Policy
-                Text(
+                const Text(
                   'By signing in with an account, you agree to BloodHope\'s Terms of Service and Privacy Policy.',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontFamily: 'Poppins', // Added font family
                     fontSize: 12,
-                    color: const Color.fromARGB(255, 0, 0, 0),
+                    color: Color.fromARGB(255, 0, 0, 0),
                   ),
                 ),
               ],
@@ -185,33 +192,33 @@ class LoginPage extends StatelessWidget {
       obscureText: obscureText,
       decoration: InputDecoration(
         labelText: labelText,
-        labelStyle: TextStyle(
+        labelStyle: const TextStyle(
           fontFamily: 'Poppins', // Added font family
           fontSize: 14,
           color: Color(0xFFD60030),
         ),
         prefixIcon: Icon(
           icon,
-          color: Color(0xFFD60030),
+          color: const Color(0xFFD60030),
         ),
         suffixIcon: suffixIcon != null
             ? Icon(
                 suffixIcon,
-                color: Color(0xFFD60030),
+                color: const Color(0xFFD60030),
               )
             : null,
         filled: true,
         fillColor: Colors.white,
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(
+          borderSide: const BorderSide(
             color: Color(0xFFD60030), // Stroke color
             width: 1.5,
           ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(
+          borderSide: const BorderSide(
             color: Color(0xFFD60030), // Stroke color
             width: 2.0,
           ),
