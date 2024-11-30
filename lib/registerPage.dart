@@ -1,4 +1,4 @@
-import 'package:blood_donation_app/homePage.dart';
+import 'package:blood_donation_app/dashboard_screen.dart';
 import 'package:flutter/material.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -108,7 +108,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       // Handle registration logic
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (context) => const BloodHopeHomePage()),
+                        MaterialPageRoute(builder: (context) => const HomePage()),
                       );
                     },
                     child: AnimatedContainer(
