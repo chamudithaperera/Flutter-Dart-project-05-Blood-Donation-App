@@ -102,193 +102,235 @@ class HomePage extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.map),
-            label: 'Map',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.qr_code),
-            label: 'QR',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.history),
-            label: 'History',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.add),
-            label: 'Donate',
-          ),
-        ],
-        selectedItemColor: const Color(0xFFD60030),
-        unselectedItemColor: Colors.grey,
-        type: BottomNavigationBarType.fixed,
-      ),
-    );
-  }
-
-  Widget buildStatCard(String title, String value, String subtitle) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.all(16.0),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 6,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Column(
-          children: [
-            Text(
-              title,
-              style: const TextStyle(
-                fontFamily: 'Poppins',
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
+        bottomNavigationBar: Stack(
+            clipBehavior: Clip.none, // Important for allowing overflow
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 10), // Reduce overall bar height
+                child: BottomNavigationBar(
+                  backgroundColor: const Color(0xFFD60030),
+                  selectedItemColor: Colors.white,
+                  unselectedItemColor: Colors.white54,
+                  showSelectedLabels: false,
+                  showUnselectedLabels: false,
+                  type: BottomNavigationBarType.fixed,
+                  items: [
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.home, size: 24),
+                      label: 'Home',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.map, size: 24),
+                      label: 'Map',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: SizedBox(), // Empty icon to make space for floating button
+                      label: 'QR',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.history, size: 24),
+                      label: 'History',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.add, size: 24),
+                      label: 'Donate',
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              value,
-              style: const TextStyle(
-                fontFamily: 'Poppins',
-                fontSize: 48,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFFD60030),
+              Positioned(
+                bottom: 0, // Positioned directly on the edge of the navigation bar
+                left: MediaQuery.of(context).size.width / 2 - 30, // Center the button
+                child: Container(
+                  width: 60, // Reduced size
+                  height: 60, // Reduced size
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Center(
+                    child: Icon(
+                      Icons.qr_code, 
+                      color: const Color(0xFFD60030),
+                      size: 30, // Reduced icon size
+                    ),
+                  ),
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              subtitle,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontFamily: 'Poppins',
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
-                color: Colors.black54,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget buildSmallCard(String title, String value) {
-    return Container(
-      padding: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 6,
-            offset: const Offset(0, 4),
+            ],
           ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Text(
-            title,
-            style: const TextStyle(
-              fontFamily: 'Poppins',
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: const TextStyle(
-              fontFamily: 'Poppins',
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFFD60030),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget buildCircularEligibility() {
-    return Container(
-      padding: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 6,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          const Text(
-            'Donation Eligibility',
-            style: TextStyle(
-              fontFamily: 'Poppins',
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
-          ),
-          const SizedBox(height: 16),
-          CircularPercentIndicator(
-            radius: 50,
-            lineWidth: 10,
-            percent: 0.85,
-            center: const Text(
-              'Eligible in\n15 days',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontFamily: 'Poppins',
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFFD60030),
-              ),
-            ),
-            progressColor: const Color(0xFFD60030),
-            backgroundColor: const Color(0xFFF5E6E6),
-            circularStrokeCap: CircularStrokeCap.round,
-          ),
-        ],
-      ),
     );
   }
 
   Widget buildStatsRow() {
-    return Row(
-      children: [
-        buildStatCard('Thank You!', '2', 'You did donations'),
-        const SizedBox(width: 16),
-        Column(
+  return Row(
+    children: [
+      Expanded(
+        flex: 6,
+        child: buildStatCard('Thank You!', '2', 'You did donations'),
+      ),
+      const SizedBox(width: 16),
+      Expanded(
+        flex: 4,
+        child: Column(
           children: [
             buildSmallCard('Blood Group', 'O+'),
             const SizedBox(height: 16),
             buildCircularEligibility(),
           ],
         ),
+      ),
+    ],
+  );
+}
+
+Widget buildStatCard(String title, String value, String subtitle) {
+  return Container(
+    width: double.infinity,
+    padding: const EdgeInsets.all(16.0),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(16),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.1),
+          blurRadius: 6,
+          offset: const Offset(0, 4),
+        ),
       ],
-    );
-  }
+    ),
+    child: Column(
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            fontFamily: 'Poppins',
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
+        ),
+        Text(
+          value,
+          style: const TextStyle(
+            fontFamily: 'Poppins',
+            fontSize: 78,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFFD60030),
+          ),
+        ),
+        Text(
+          subtitle,
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            fontFamily: 'Poppins',
+            fontSize: 15,
+            fontWeight: FontWeight.w400,
+            color: Colors.black54,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget buildSmallCard(String title, String value) {
+  return Container(
+    width: double.infinity,
+    padding: const EdgeInsets.all(10.0),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(16),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.1),
+          blurRadius: 6,
+          offset: const Offset(0, 4),
+        ),
+      ],
+    ),
+    child: Column(
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            fontFamily: 'Poppins',
+            fontSize: 15,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          value,
+          style: const TextStyle(
+            fontFamily: 'Poppins',
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFFD60030),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget buildCircularEligibility() {
+  return Container(
+    width: double.infinity,
+    padding: const EdgeInsets.all(10.0),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(16),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.1),
+          blurRadius: 6,
+          offset: const Offset(0, 4),
+        ),
+      ],
+    ),
+    child: Column(
+      children: [
+        const Text(
+          'Donation Eligibility',
+          style: TextStyle(
+            fontFamily: 'Poppins',
+            fontSize: 15,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
+        ),
+        const SizedBox(height: 16),
+        CircularPercentIndicator(
+          radius: 50,
+          lineWidth: 10,
+          percent: 0.85,
+          center: const Text(
+            'Eligible in\n15 days',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontFamily: 'Poppins',
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFFD60030),
+            ),
+          ),
+          progressColor: const Color(0xFFD60030),
+          backgroundColor: const Color(0xFFF5E6E6),
+          circularStrokeCap: CircularStrokeCap.round,
+        ),
+      ],
+    ),
+  );
+}
 
   Widget buildCampaignCard(String location, String imagePath) {
     return Container(
