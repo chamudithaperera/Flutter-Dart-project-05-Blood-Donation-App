@@ -30,7 +30,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  google_maps_flutter: ^2.10.0
   qr_code_scanner: ^1.0.1
   font_awesome_flutter: ^10.8.0
   percent_indicator: ^4.2.4
