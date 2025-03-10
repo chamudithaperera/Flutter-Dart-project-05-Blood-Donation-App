@@ -1,3 +1,4 @@
+import 'package:blood_donation_app/pages/loginPage.dart';
 import 'package:flutter/material.dart';
 
 class GetStartPage extends StatelessWidget {
@@ -61,7 +62,26 @@ class GetStartPage extends StatelessWidget {
             // Animated Get Started Button
             GestureDetector(
               onTap: () {
-                // Add navigation logic here
+                Navigator.of(context).push(
+                  PageRouteBuilder(
+                    transitionDuration: const Duration(milliseconds: 300),
+                    pageBuilder: (context, animation, secondaryAnimation) =>
+                        const LoginPage(),
+                    transitionsBuilder:
+                        (context, animation, secondaryAnimation, child) {
+                      return SlideTransition(
+                        position: Tween<Offset>(
+                          begin: const Offset(1, 0), // Slide from right
+                          end: Offset.zero,
+                        ).animate(CurvedAnimation(
+                          parent: animation,
+                          curve: Curves.easeInOut,
+                        )),
+                        child: child,
+                      );
+                    },
+                  ),
+                );
               },
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
