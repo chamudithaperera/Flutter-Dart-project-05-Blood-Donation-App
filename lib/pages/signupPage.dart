@@ -1,15 +1,28 @@
-import 'package:blood_donation_app/pages/signupPage.dart';
+import 'package:blood_donation_app/pages/loginPage.dart';
 import 'package:flutter/material.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class SignupPage extends StatefulWidget {
+  const SignupPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<SignupPage> createState() => _SignupPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _SignupPageState extends State<SignupPage> {
   bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
+  String? _selectedBloodGroup;
+
+  final List<String> _bloodGroups = [
+    "A+",
+    "A-",
+    "B+",
+    "B-",
+    "O+",
+    "O-",
+    "AB+",
+    "AB-"
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -27,9 +40,9 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                SizedBox(height: size.height * 0.06),
+                SizedBox(height: size.height * 0.04),
 
-                // Heading
+                // Heading - Same as login page
                 const Text(
                   'Welcome Donators',
                   textAlign: TextAlign.center,
@@ -42,7 +55,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 SizedBox(height: size.height * 0.01),
 
-                // Subheading
+                // Subheading - Same as login page
                 const Text(
                   'Login or Sign up to access your account',
                   textAlign: TextAlign.center,
@@ -54,9 +67,9 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 SizedBox(height: size.height * 0.06),
 
-                // Login Text
+                // Sign Up Text
                 const Text(
-                  'Login',
+                  'Sign Up',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 22,
@@ -68,6 +81,13 @@ class _LoginPageState extends State<LoginPage> {
 
                 // Input Fields
                 _buildTextField(
+                  hintText: "Full Name",
+                  icon: Icons.person_outline,
+                  isPassword: false,
+                ),
+                SizedBox(height: size.height * 0.02),
+
+                _buildTextField(
                   hintText: "NIC Number",
                   icon: Icons.badge_outlined,
                   isPassword: false,
@@ -78,40 +98,31 @@ class _LoginPageState extends State<LoginPage> {
                   hintText: "Password",
                   icon: Icons.lock_outline,
                   isPassword: true,
+                  isConfirm: false,
                 ),
+                SizedBox(height: size.height * 0.02),
 
-                // Forgot Password
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: () {},
-                    style: TextButton.styleFrom(
-                      foregroundColor: const Color(0xFFD60033),
-                      padding: const EdgeInsets.symmetric(vertical: 8),
-                    ),
-                    child: const Text(
-                      'Forgot Password?',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
+                _buildTextField(
+                  hintText: "Confirm Password",
+                  icon: Icons.lock_outline,
+                  isPassword: true,
+                  isConfirm: true,
                 ),
+                SizedBox(height: size.height * 0.02),
 
+                _buildBloodGroupDropdown(),
+                SizedBox(height: size.height * 0.04),
+
+                // Sign Up Button
+                _buildSignupButton(),
                 SizedBox(height: size.height * 0.03),
 
-                // Login Button
-                _buildLoginButton(),
-
-                SizedBox(height: size.height * 0.03),
-
-                // Sign Up Link
+                // Login Link
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Text(
-                      "Don't have an account? ",
+                      "Already have an account? ",
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.black54,
@@ -122,11 +133,11 @@ class _LoginPageState extends State<LoginPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const SignupPage()),
+                              builder: (context) => const LoginPage()),
                         );
                       },
                       child: const Text(
-                        'Sign Up',
+                        'Login',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
@@ -137,8 +148,8 @@ class _LoginPageState extends State<LoginPage> {
                   ],
                 ),
 
-                // Spacer
-                SizedBox(height: size.height * 0.15),
+                // Spacer to push content down
+                SizedBox(height: size.height * 0.04),
 
                 // Terms and Privacy Section - Fixed at bottom
                 Container(
@@ -146,7 +157,7 @@ class _LoginPageState extends State<LoginPage> {
                   child: Column(
                     children: [
                       const Text(
-                        'By signing in, you agree to BloodHope\'s',
+                        'By signing up, you agree to BloodHope\'s',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 12,
@@ -209,6 +220,7 @@ class _LoginPageState extends State<LoginPage> {
     required String hintText,
     required IconData icon,
     required bool isPassword,
+    bool isConfirm = false,
   }) {
     return Container(
       decoration: BoxDecoration(
@@ -223,19 +235,31 @@ class _LoginPageState extends State<LoginPage> {
         ],
       ),
       child: TextField(
-        obscureText: isPassword ? _obscurePassword : false,
+        obscureText: isPassword
+            ? (isConfirm ? _obscureConfirmPassword : _obscurePassword)
+            : false,
         decoration: InputDecoration(
           prefixIcon:
               Icon(icon, color: const Color(0xFFD60033).withOpacity(0.7)),
           suffixIcon: isPassword
               ? IconButton(
                   icon: Icon(
-                    _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                    isConfirm
+                        ? (_obscureConfirmPassword
+                            ? Icons.visibility_off
+                            : Icons.visibility)
+                        : (_obscurePassword
+                            ? Icons.visibility_off
+                            : Icons.visibility),
                     color: Colors.black54,
                   ),
                   onPressed: () {
                     setState(() {
-                      _obscurePassword = !_obscurePassword;
+                      if (isConfirm) {
+                        _obscureConfirmPassword = !_obscureConfirmPassword;
+                      } else {
+                        _obscurePassword = !_obscurePassword;
+                      }
                     });
                   },
                 )
@@ -265,7 +289,69 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget _buildLoginButton() {
+  Widget _buildBloodGroupDropdown() {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 3,
+            offset: const Offset(0, 1),
+          ),
+        ],
+        border: Border.all(color: Colors.grey.shade300, width: 1),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          child: DropdownButton<String>(
+            value: _selectedBloodGroup,
+            hint: Row(
+              children: [
+                Icon(
+                  Icons.bloodtype_outlined,
+                  color: const Color(0xFFD60033).withOpacity(0.7),
+                ),
+                const SizedBox(width: 12),
+                const Text(
+                  "Select Blood Group",
+                  style: TextStyle(
+                    color: Colors.black45,
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+            isExpanded: true,
+            icon: const Icon(Icons.arrow_drop_down, color: Colors.black54),
+            iconSize: 28,
+            borderRadius: BorderRadius.circular(12),
+            items: _bloodGroups.map((String bloodGroup) {
+              return DropdownMenuItem<String>(
+                value: bloodGroup,
+                child: Text(
+                  bloodGroup,
+                  style: const TextStyle(
+                    fontSize: 16,
+                  ),
+                ),
+              );
+            }).toList(),
+            onChanged: (String? newValue) {
+              setState(() {
+                _selectedBloodGroup = newValue;
+              });
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSignupButton() {
     return Container(
       height: 55,
       decoration: BoxDecoration(
@@ -290,13 +376,13 @@ class _LoginPageState extends State<LoginPage> {
           padding: const EdgeInsets.symmetric(vertical: 12),
         ),
         onPressed: () {
-          // TODO: Implement login logic
+          // TODO: Implement signup logic
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Login button pressed')),
+            const SnackBar(content: Text('Sign up button pressed')),
           );
         },
         child: const Text(
-          'Login',
+          'Sign Up',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
