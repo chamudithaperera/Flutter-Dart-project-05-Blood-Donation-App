@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/terms_privacy_section.dart';
+import 'mainScreen.dart';
 import 'signupPage.dart';
 
 class LoginPage extends StatefulWidget {
@@ -26,9 +27,12 @@ class _LoginPageState extends State<LoginPage> {
 
   void _handleLogin() {
     if (_formKey.currentState?.validate() ?? false) {
-      // TODO: Implement login logic
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Login button pressed')),
+      // Navigate to Home Page
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                const MainScreen()), // Replace HomePage with your actual home screen widget
       );
     }
   }
