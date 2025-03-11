@@ -23,11 +23,41 @@ class _HomePageState extends State<HomePage> {
           title: appBarText,
           actions: appBarAction,
         ),
-        body: const SingleChildScrollView(
+        body: SingleChildScrollView(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              FirstContainer(),
-              SecondContainer(),
+              Container(
+                padding: const EdgeInsets.fromLTRB(20, 30, 20, 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Welcome!',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.grey[600],
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const Text(
+                          'User Name',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const FirstContainer(),
+              const SecondContainer(),
             ],
           ),
         ));
