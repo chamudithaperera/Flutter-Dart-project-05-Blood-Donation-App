@@ -10,9 +10,18 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
+      title: 'Blood Donation App',
+      theme: ThemeData(
+        primaryColor: const Color(0xFFD60033),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFFD60033),
+          primary: const Color(0xFFD60033),
+        ),
+        useMaterial3: true,
+      ),
       debugShowCheckedModeBanner: false,
-      home: LoadingPage(),
+      home: const LoadingPage(),
     );
   }
 }
