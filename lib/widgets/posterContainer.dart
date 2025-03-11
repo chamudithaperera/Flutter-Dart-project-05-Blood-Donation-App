@@ -13,10 +13,10 @@ class PosterContainer extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(
-            height: 200,
+            height: 203,
             width: 160,
             decoration: BoxDecoration(
-              color: const Color(0xffFDF2F5),
+              color: const Color.fromARGB(255, 255, 231, 237),
               borderRadius: BorderRadius.circular(10),
               boxShadow: [
                 BoxShadow(
@@ -31,22 +31,25 @@ class PosterContainer extends StatelessWidget {
               children: [
                 Padding(
                   padding: const EdgeInsets.all(5.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.place,
-                        size: 15,
-                      ),
-                      const SizedBox(width: 5),
-                      Text(
-                        location,
-                        style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600),
-                      )
-                    ],
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(5, 5, 5, 0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.place,
+                          size: 15,
+                        ),
+                        const SizedBox(width: 5),
+                        Text(
+                          location,
+                          style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600),
+                        )
+                      ],
+                    ),
                   ),
                 ),
                 const SizedBox(height: 8),
