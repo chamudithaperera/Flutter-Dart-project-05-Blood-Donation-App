@@ -31,31 +31,60 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: _pages[_selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        selectedItemColor: Colors.blue,
-        unselectedItemColor: Colors.grey,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+      bottomNavigationBar: BottomAppBar(
+        shape: const CircularNotchedRectangle(),
+        notchMargin: 10.0,
+        color: const Color(0xffD60033),
+        child: Container(
+          height: 70,
+          decoration: const BoxDecoration(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.map),
-            label: 'Map',
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _buildNavItem(Icons.home, 0),
+              _buildNavItem(Icons.location_on, 1),
+              const SizedBox(width: 50), // Space for QR Button
+              _buildNavItem(Icons.history, 2),
+              _buildNavItem(Icons.library_add, 3),
+            ],
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.history),
-            label: 'History',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.add_box),
-            label: 'Add New',
-          ),
-        ],
+        ),
       ),
+      floatingActionButton: Container(
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              spreadRadius: 2,
+              blurRadius: 8,
+            ),
+          ],
+        ),
+        child: FloatingActionButton(
+          backgroundColor: Colors.white,
+          shape: const CircleBorder(),
+          onPressed: () {},
+          child: const Icon(Icons.qr_code, size: 36, color: Colors.red),
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+    );
+  }
+
+  Widget _buildNavItem(IconData icon, int index) {
+    return IconButton(
+      icon: Icon(
+        icon,
+        size: 30,
+        color: _selectedIndex == index ? Colors.white : Colors.white70,
+      ),
+      onPressed: () => _onItemTapped(index),
     );
   }
 }
