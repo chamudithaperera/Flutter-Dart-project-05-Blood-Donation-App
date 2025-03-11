@@ -4,9 +4,9 @@ class TermsPrivacySection extends StatelessWidget {
   final bool isSignIn;
 
   const TermsPrivacySection({
-    Key? key,
+    super.key,
     this.isSignIn = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

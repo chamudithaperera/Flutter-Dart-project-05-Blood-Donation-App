@@ -8,13 +8,13 @@ class CustomTextField extends StatefulWidget {
   final String? Function(String?)? validator;
 
   const CustomTextField({
-    Key? key,
+    super.key,
     required this.hintText,
     required this.icon,
     this.isPassword = false,
     this.controller,
     this.validator,
-  }) : super(key: key);
+  });
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();

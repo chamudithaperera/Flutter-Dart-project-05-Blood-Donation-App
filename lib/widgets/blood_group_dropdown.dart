@@ -5,10 +5,10 @@ class BloodGroupDropdown extends StatefulWidget {
   final Function(String?) onChanged;
 
   const BloodGroupDropdown({
-    Key? key,
+    super.key,
     this.selectedBloodGroup,
     required this.onChanged,
-  }) : super(key: key);
+  });
 
   @override
   State<BloodGroupDropdown> createState() => _BloodGroupDropdownState();

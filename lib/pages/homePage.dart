@@ -75,7 +75,7 @@ class _HomePageState extends State<HomePage> {
                                   width: 120,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
-                                    color: Color(0xFFD60033),
+                                    color: const Color(0xFFD60033),
                                   ),
                                   child: const Column(
                                     mainAxisAlignment: MainAxisAlignment.center,

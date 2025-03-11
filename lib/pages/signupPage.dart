@@ -7,7 +7,7 @@ import '../widgets/terms_privacy_section.dart';
 import 'loginPage.dart';
 
 class SignupPage extends StatefulWidget {
-  const SignupPage({Key? key}) : super(key: key);
+  const SignupPage({super.key});
 
   @override
   State<SignupPage> createState() => _SignupPageState();

@@ -5,7 +5,7 @@ import 'homePage.dart';
 import 'mapPage.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({Key? key}) : super(key: key);
+  const MainScreen({super.key});
 
   @override
   _MainScreenState createState() => _MainScreenState();

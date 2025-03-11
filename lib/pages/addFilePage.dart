@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AddFilePage extends StatelessWidget {
-  const AddFilePage({Key? key}) : super(key: key);
+  const AddFilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
