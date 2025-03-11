@@ -10,6 +10,30 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  // Total days between donations
+  final int totalDaysBetweenDonations =
+      56; // Typical waiting period for blood donation
+
+  // Current days remaining until eligible
+  int daysRemaining =
+      15; // This can be updated dynamically from your data source
+
+  // Calculate progress value (0.0 to 1.0)
+  double get eligibilityProgress {
+    // Calculate days elapsed
+    int daysElapsed = totalDaysBetweenDonations - daysRemaining;
+
+    // Calculate progress (0.0 to 1.0)
+    return daysElapsed / totalDaysBetweenDonations;
+  }
+
+  // Method to update days remaining
+  void updateDaysRemaining(int newDays) {
+    setState(() {
+      daysRemaining = newDays;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,7 +72,7 @@ class _HomePageState extends State<HomePage> {
                         children: [
                           Container(
                             height: 200,
-                            width: 220,
+                            width: 200,
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(10),
@@ -61,57 +85,60 @@ class _HomePageState extends State<HomePage> {
                                 ),
                               ],
                             ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                const Text(
-                                  'Thank You!',
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                Container(
-                                  height: 120,
-                                  width: 120,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: const Color(0xFFD60033),
+                            child: Padding(
+                              padding: const EdgeInsets.all(5.0),
+                              child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  const Text(
+                                    'Thank You!',
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold),
                                   ),
-                                  child: const Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        '2',
-                                        style: TextStyle(
-                                            fontSize: 70,
-                                            fontWeight: FontWeight.w700,
-                                            color: Colors.white),
-                                      ),
-                                      Text(
-                                        'Times',
-                                        style: TextStyle(
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.white),
-                                      ),
-                                    ],
+                                  Container(
+                                    height: 130,
+                                    width: 140,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: const Color(0xFFD60033),
+                                    ),
+                                    child: const Column(
+                                      children: [
+                                        Text(
+                                          '2',
+                                          style: TextStyle(
+                                              fontSize: 70,
+                                              fontWeight: FontWeight.w700,
+                                              color: Colors.white),
+                                        ),
+                                        Text(
+                                          'Times',
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w900,
+                                              color: Colors.white),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                const Text(
-                                  'You did donations',
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                              ],
+                                  const Text(
+                                    'You did donations',
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                           Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Container(
-                                height: 50,
-                                width: 140,
+                                height: 80,
+                                width: 160,
                                 decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(10),
@@ -124,13 +151,28 @@ class _HomePageState extends State<HomePage> {
                                     ),
                                   ],
                                 ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      const Text(
+                                        'Blood Group',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
                               const SizedBox(
                                 height: 10,
                               ),
                               Container(
-                                height: 140,
-                                width: 140,
+                                height: 110,
+                                width: 160,
                                 decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(10),
@@ -142,6 +184,98 @@ class _HomePageState extends State<HomePage> {
                                       offset: const Offset(1, 1),
                                     ),
                                   ],
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Text(
+                                        'Donation Eligibility',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14),
+                                      ),
+                                      const SizedBox(height: 2),
+                                      Expanded(
+                                        child: Center(
+                                          child: SizedBox(
+                                            width: 90,
+                                            height: 90,
+                                            child: Stack(
+                                              alignment: Alignment.center,
+                                              children: [
+                                                // Background circle (light pink)
+                                                CircularProgressIndicator(
+                                                  value: 1,
+                                                  strokeWidth: 7,
+                                                  backgroundColor:
+                                                      const Color(0xFFD60033)
+                                                          .withOpacity(0.1),
+                                                  valueColor:
+                                                      AlwaysStoppedAnimation<
+                                                          Color>(
+                                                    const Color(0xFFD60033)
+                                                        .withOpacity(0.1),
+                                                  ),
+                                                ),
+
+                                                // Foreground circle (actual progress - red)
+                                                CircularProgressIndicator(
+                                                  value: eligibilityProgress,
+                                                  strokeWidth: 7,
+                                                  backgroundColor:
+                                                      Colors.transparent,
+                                                  valueColor:
+                                                      const AlwaysStoppedAnimation<
+                                                          Color>(
+                                                    Color(0xFFD60033),
+                                                  ),
+                                                ),
+
+                                                // Center text
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 2),
+                                                  child: Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: [
+                                                      Text(
+                                                        daysRemaining == 0
+                                                            ? 'Eligible'
+                                                            : 'Eligible in',
+                                                        style: TextStyle(
+                                                          fontSize: 11,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: Colors.black
+                                                              .withOpacity(0.7),
+                                                        ),
+                                                      ),
+                                                      const SizedBox(height: 2),
+                                                      Text(
+                                                        daysRemaining == 0
+                                                            ? 'now'
+                                                            : '$daysRemaining days',
+                                                        style: const TextStyle(
+                                                          fontSize: 14,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ],
@@ -160,6 +294,72 @@ class _HomePageState extends State<HomePage> {
                   height: 100,
                   width: double.infinity,
                   color: Colors.pink,
+                ),
+
+                // For testing - Buttons to adjust days remaining
+                // You can remove these in your production code
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () => updateDaysRemaining(56),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFD60033),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 8),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: const Text('56 days',
+                            style: TextStyle(color: Colors.white)),
+                      ),
+                      const SizedBox(width: 10),
+                      ElevatedButton(
+                        onPressed: () => updateDaysRemaining(30),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFD60033),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 8),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: const Text('30 days',
+                            style: TextStyle(color: Colors.white)),
+                      ),
+                      const SizedBox(width: 10),
+                      ElevatedButton(
+                        onPressed: () => updateDaysRemaining(15),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFD60033),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 8),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: const Text('15 days',
+                            style: TextStyle(color: Colors.white)),
+                      ),
+                      const SizedBox(width: 10),
+                      ElevatedButton(
+                        onPressed: () => updateDaysRemaining(0),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFD60033),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 8),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: const Text('0 days',
+                            style: TextStyle(color: Colors.white)),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
