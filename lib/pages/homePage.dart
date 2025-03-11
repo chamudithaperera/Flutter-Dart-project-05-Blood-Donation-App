@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../widgets/firstContainer.dart';
 import '../widgets/main_Appbar.dart';
 import '../widgets/secondContainer.dart';
+import '../widgets/thirdContainer.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -58,6 +59,7 @@ class _HomePageState extends State<HomePage> {
               ),
               const FirstContainer(),
               const SecondContainer(),
+              const ThirdContainer()
             ],
           ),
         ));

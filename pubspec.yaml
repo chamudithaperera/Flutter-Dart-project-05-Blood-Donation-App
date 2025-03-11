@@ -73,6 +73,9 @@ flutter:
     - assets/get_started_image.png
     - assets/blood_donation_poster_1.jpg
     - assets/blood_donation_poster_2.jpeg
+    - assets/BeforeDonation.jpg
+    - assets/AfterDonation.jpg
+    - assets/HealthyHabits.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
