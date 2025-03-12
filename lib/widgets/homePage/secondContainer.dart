@@ -1,21 +1,18 @@
-import 'package:blood_donation_app/widgets/homePage/posterContainer.dart';
 import 'package:flutter/material.dart';
+import 'package:blood_donation_app/widgets/homePage/posterContainer.dart';
+import 'package:blood_donation_app/data/campaign_data.dart';
+import 'package:blood_donation_app/pages/all_campaigns_page.dart';
 
-class SecondContainer extends StatefulWidget {
+class SecondContainer extends StatelessWidget {
   const SecondContainer({super.key});
 
-  @override
-  State<SecondContainer> createState() => _SecondContainerState();
-}
-
-class _SecondContainerState extends State<SecondContainer> {
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Container(
         width: double.infinity,
-        height: 290, // Original height
+        height: 290,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(10),
@@ -30,11 +27,11 @@ class _SecondContainerState extends State<SecondContainer> {
         ),
         child: Stack(
           children: [
-            const Padding(
-              padding: EdgeInsets.all(10.0),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
               child: Column(
                 children: [
-                  Padding(
+                  const Padding(
                     padding: EdgeInsets.only(top: 5),
                     child: Text(
                       'Blood Donation Campaign Near You',
@@ -43,27 +40,18 @@ class _SecondContainerState extends State<SecondContainer> {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.fromLTRB(10, 20, 10, 10),
+                    padding: const EdgeInsets.fromLTRB(10, 20, 10, 10),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        PosterContainer(
-                          location: "Narahenpita",
-                          date: "2023-10-20",
-                          time: "10:00 AM",
-                          details:
-                              "Join us for a blood donation campaign in Narahenpita on October 20, 2023, at 10:00 AM. Your donation can save lives and make a difference in someone's future. Be a hero—donate blood and help those in need. See you there!",
-                          imagePath: "assets/blood_donation_poster_1.jpg",
-                        ),
-                        PosterContainer(
-                          location: "Kalubowila",
-                          date: "2023-10-20",
-                          time: "10:00 AM",
-                          details:
-                              "JJoin us for a blood donation campaign in Narahenpita on October 20, 2023, at 10:00 AM. Your donation can save lives and make a difference in someone's future. Be a hero—donate blood and help those in need. See you there!",
-                          imagePath: "assets/blood_donation_poster_2.jpeg",
-                        ),
-                      ],
+                      children: campaignData.take(2).map((campaign) {
+                        return PosterContainer(
+                          location: campaign["location"]!,
+                          date: campaign["date"]!,
+                          time: campaign["time"]!,
+                          details: campaign["details"]!,
+                          imagePath: campaign["imagePath"]!,
+                        );
+                      }).toList(),
                     ),
                   ),
                 ],
@@ -74,11 +62,12 @@ class _SecondContainerState extends State<SecondContainer> {
               bottom: 0,
               child: GestureDetector(
                 onTap: () {
-                  // Add navigation to more campaigns
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(builder: (context) => AllCampaignsPage()),
-                  // );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const AllCampaignsPage(),
+                    ),
+                  );
                 },
                 child: Container(
                   padding:
