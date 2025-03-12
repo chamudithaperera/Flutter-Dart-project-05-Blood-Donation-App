@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../widgets/homePage/firstContainer.dart';
+import '../widgets/homePage/fourthContainer.dart';
 import '../widgets/main_Appbar.dart';
 import '../widgets/homePage/secondContainer.dart';
 import '../widgets/homePage/thirdContainer.dart';
@@ -59,7 +60,8 @@ class _HomePageState extends State<HomePage> {
               ),
               const FirstContainer(),
               const SecondContainer(),
-              const ThirdContainer()
+              const ThirdContainer(),
+              const FourthContainer(),
             ],
           ),
         ));

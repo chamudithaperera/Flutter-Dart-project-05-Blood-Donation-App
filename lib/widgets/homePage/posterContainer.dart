@@ -16,7 +16,7 @@ class PosterContainer extends StatelessWidget {
             height: 203,
             width: 160,
             decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 255, 231, 237),
+              color: const Color(0xFFF5E6EA),
               borderRadius: BorderRadius.circular(10),
               boxShadow: [
                 BoxShadow(

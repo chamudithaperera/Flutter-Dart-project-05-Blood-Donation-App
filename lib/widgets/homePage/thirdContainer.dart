@@ -10,6 +10,38 @@ class ThirdContainer extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFFF5F7),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: const Color(0xFFD60033).withOpacity(0.3),
+                width: 1,
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Eligibility Guidelines',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                _buildBulletPoint('Age: 18-60 years'),
+                _buildBulletPoint('Weight: Above 50kg'),
+                _buildBulletPoint(
+                    'Hemoglobin: Males > 13g/dL, Females > 12g/dL'),
+                _buildBulletPoint('Wait 3 months between donations'),
+              ],
+            ),
+          ),
+          const SizedBox(
+            height: 15,
+          ),
           Padding(
             padding: const EdgeInsets.only(bottom: 16, left: 4, top: 10),
             child: Row(
@@ -157,6 +189,34 @@ class ThirdContainer extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildBulletPoint(String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '• ',
+            style: TextStyle(
+              color: const Color(0xFFD60033),
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(
+                fontSize: 13,
+                color: Colors.black.withOpacity(0.7),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
