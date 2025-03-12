@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../widgets/firstContainer.dart';
+import '../widgets/homePage/firstContainer.dart';
 import '../widgets/main_Appbar.dart';
-import '../widgets/secondContainer.dart';
-import '../widgets/thirdContainer.dart';
+import '../widgets/homePage/secondContainer.dart';
+import '../widgets/homePage/thirdContainer.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

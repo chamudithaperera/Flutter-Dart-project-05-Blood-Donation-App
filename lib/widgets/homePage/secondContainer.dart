@@ -1,4 +1,4 @@
-import 'package:blood_donation_app/widgets/posterContainer.dart';
+import 'package:blood_donation_app/widgets/homePage/posterContainer.dart';
 import 'package:flutter/material.dart';
 
 class SecondContainer extends StatefulWidget {

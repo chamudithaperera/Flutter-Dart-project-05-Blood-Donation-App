@@ -174,8 +174,7 @@ class _FirstContainerState extends State<FirstContainer> {
                             ],
                           ),
                           child: Column(
-                            mainAxisSize: MainAxisSize
-                                .min, // Added to prevent Column overflow
+                            mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               const Padding(
@@ -189,14 +188,44 @@ class _FirstContainerState extends State<FirstContainer> {
                                   ),
                                 ),
                               ),
-                              Center(
-                                child: SizedBox(
-                                  width: 80,
-                                  height: 80,
-                                  child: Stack(
+                              const SizedBox(
+                                height: 12,
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  // Content
+                                  Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        daysRemaining == 0
+                                            ? 'Ready'
+                                            : 'Eligible in',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w400,
+                                          color: Colors.black.withOpacity(0.6),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        daysRemaining == 0
+                                            ? 'now'
+                                            : '$daysRemaining days',
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+
+                                  // indicator
+                                  Stack(
                                     alignment: Alignment.center,
                                     children: [
-                                      // Background track
                                       CircularProgressIndicator(
                                         value: 1,
                                         strokeWidth: 7,
@@ -218,37 +247,9 @@ class _FirstContainerState extends State<FirstContainer> {
                                           Color(0xFFD60033),
                                         ),
                                       ),
-
-                                      // Content inside the circle
-                                      Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Text(
-                                            daysRemaining == 0
-                                                ? 'Ready'
-                                                : 'Eligible in',
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w400,
-                                              color:
-                                                  Colors.black.withOpacity(0.6),
-                                            ),
-                                          ),
-                                          const SizedBox(height: 4),
-                                          Text(
-                                            daysRemaining == 0
-                                                ? 'now'
-                                                : '$daysRemaining days',
-                                            style: const TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
                                     ],
                                   ),
-                                ),
+                                ],
                               )
                             ],
                           ),
