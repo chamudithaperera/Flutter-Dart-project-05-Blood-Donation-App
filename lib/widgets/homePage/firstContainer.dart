@@ -14,7 +14,7 @@ class _FirstContainerState extends State<FirstContainer> {
 
   // Current days remaining until eligible
   int daysRemaining =
-      15; // This can be updated dynamically from your data source
+      20; // This can be updated dynamically from your data source
 
   // Calculate progress value (0.0 to 1.0)
   double get eligibilityProgress {
@@ -48,7 +48,6 @@ class _FirstContainerState extends State<FirstContainer> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     //container 01 ----------------------
-
                     Container(
                       height: 200,
                       width: 200,
@@ -64,49 +63,84 @@ class _FirstContainerState extends State<FirstContainer> {
                           ),
                         ],
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            const Text(
-                              'Thank You!',
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.only(top: 10),
+                            child: Text(
+                              'Donation Eligibility',
                               style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold),
-                            ),
-                            Container(
-                              height: 130,
-                              width: 140,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: const Color(0xFFD60033),
-                              ),
-                              child: const Column(
-                                children: [
-                                  Text(
-                                    '2',
-                                    style: TextStyle(
-                                        fontSize: 70,
-                                        fontWeight: FontWeight.w700,
-                                        color: Colors.white),
-                                  ),
-                                  Text(
-                                    'Times',
-                                    style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w900,
-                                        color: Colors.white),
-                                  ),
-                                ],
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                                letterSpacing: -0.3,
                               ),
                             ),
-                            const Text(
-                              'You did donations',
-                              style: TextStyle(
-                                  fontSize: 15, fontWeight: FontWeight.w600),
+                          ),
+
+                          // Indicator
+                          Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                const SizedBox(
+                                  width: 120, // Adjust the size as needed
+                                  height: 120, // Adjust the size as needed
+                                  child: CircularProgressIndicator(
+                                    value: 1,
+                                    strokeWidth: 16,
+                                    backgroundColor: Color(0xFFF5E6EA),
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      Color(0xFFF5E6EA),
+                                    ),
+                                  ),
+                                ),
+
+                                // Progress indicator
+                                SizedBox(
+                                  width: 120, // Match the same size
+                                  height: 120, // Match the same size
+                                  child: CircularProgressIndicator(
+                                    value: eligibilityProgress,
+                                    strokeWidth: 16,
+                                    backgroundColor: Colors.transparent,
+                                    valueColor:
+                                        const AlwaysStoppedAnimation<Color>(
+                                      Color(0xFFD60033),
+                                    ),
+                                  ),
+                                ),
+
+                                Column(
+                                  children: [
+                                    Text(
+                                      daysRemaining == 0
+                                          ? 'Ready'
+                                          : 'Eligible in',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w400,
+                                        color: Colors.black.withOpacity(0.6),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      daysRemaining == 0
+                                          ? 'now'
+                                          : '$daysRemaining days',
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
 
@@ -174,83 +208,42 @@ class _FirstContainerState extends State<FirstContainer> {
                             ],
                           ),
                           child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
-                              const Padding(
-                                padding: EdgeInsets.only(top: 10),
-                                child: Text(
-                                  'Donation Eligibility',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 14,
-                                    letterSpacing: -0.3,
-                                  ),
+                              Container(
+                                height: 70,
+                                width: 120,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: const Color(0xFFD60033),
+                                ),
+                                child: const Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      '2',
+                                      style: TextStyle(
+                                          fontSize: 50,
+                                          fontWeight: FontWeight.w700,
+                                          color: Colors.white),
+                                    ),
+                                    Text(
+                                      'Times',
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w900,
+                                          color: Colors.white),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              const SizedBox(
-                                height: 12,
+                              const Text(
+                                'You did donations',
+                                style: TextStyle(
+                                    fontSize: 14, fontWeight: FontWeight.w600),
                               ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  // Content
-                                  Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        daysRemaining == 0
-                                            ? 'Ready'
-                                            : 'Eligible in',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w400,
-                                          color: Colors.black.withOpacity(0.6),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        daysRemaining == 0
-                                            ? 'now'
-                                            : '$daysRemaining days',
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-
-                                  // indicator
-                                  Stack(
-                                    alignment: Alignment.center,
-                                    children: [
-                                      CircularProgressIndicator(
-                                        value: 1,
-                                        strokeWidth: 7,
-                                        backgroundColor:
-                                            const Color(0xFFF5E6EA),
-                                        valueColor:
-                                            AlwaysStoppedAnimation<Color>(
-                                          const Color(0xFFF5E6EA),
-                                        ),
-                                      ),
-
-                                      // Progress indicator
-                                      CircularProgressIndicator(
-                                        value: eligibilityProgress,
-                                        strokeWidth: 7,
-                                        backgroundColor: Colors.transparent,
-                                        valueColor:
-                                            const AlwaysStoppedAnimation<Color>(
-                                          Color(0xFFD60033),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              )
                             ],
                           ),
                         )
