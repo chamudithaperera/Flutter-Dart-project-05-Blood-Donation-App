@@ -47,6 +47,8 @@ class _FirstContainerState extends State<FirstContainer> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+                    //container 01 ----------------------
+
                     Container(
                       height: 200,
                       width: 200,
@@ -107,6 +109,9 @@ class _FirstContainerState extends State<FirstContainer> {
                         ),
                       ),
                     ),
+
+                    //container 02 ----------------------
+
                     Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -150,107 +155,104 @@ class _FirstContainerState extends State<FirstContainer> {
                         const SizedBox(
                           height: 10,
                         ),
+
+                        //container 03 ----------------------
+
                         Container(
-                          height: 110,
+                          height: 110, // Increased height to prevent overflow
                           width: 160,
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(16),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
-                                spreadRadius: 1,
-                                blurRadius: 10,
-                                offset: const Offset(1, 1),
+                                color: Colors.black.withOpacity(0.06),
+                                spreadRadius: 0,
+                                blurRadius: 20,
+                                offset: const Offset(0, 4),
                               ),
                             ],
                           ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
+                          child: Column(
+                            mainAxisSize: MainAxisSize
+                                .min, // Added to prevent Column overflow
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const Padding(
+                                padding: EdgeInsets.only(top: 10),
+                                child: Text(
                                   'Donation Eligibility',
                                   style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14),
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14,
+                                    letterSpacing: -0.3,
+                                  ),
                                 ),
-                                const SizedBox(height: 2),
-                                Expanded(
-                                  child: Center(
-                                    child: SizedBox(
-                                      width: 90,
-                                      height: 90,
-                                      child: Stack(
-                                        alignment: Alignment.center,
+                              ),
+                              Center(
+                                child: SizedBox(
+                                  width: 80,
+                                  height: 80,
+                                  child: Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      // Background track
+                                      CircularProgressIndicator(
+                                        value: 1,
+                                        strokeWidth: 7,
+                                        backgroundColor:
+                                            const Color(0xFFF5E6EA),
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                          const Color(0xFFF5E6EA),
+                                        ),
+                                      ),
+
+                                      // Progress indicator
+                                      CircularProgressIndicator(
+                                        value: eligibilityProgress,
+                                        strokeWidth: 7,
+                                        backgroundColor: Colors.transparent,
+                                        valueColor:
+                                            const AlwaysStoppedAnimation<Color>(
+                                          Color(0xFFD60033),
+                                        ),
+                                      ),
+
+                                      // Content inside the circle
+                                      Column(
+                                        mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          // Background circle (light pink)
-                                          CircularProgressIndicator(
-                                            value: 1,
-                                            strokeWidth: 7,
-                                            backgroundColor:
-                                                const Color(0xFFD60033)
-                                                    .withOpacity(0.1),
-                                            valueColor:
-                                                AlwaysStoppedAnimation<Color>(
-                                              const Color(0xFFD60033)
-                                                  .withOpacity(0.1),
+                                          Text(
+                                            daysRemaining == 0
+                                                ? 'Ready'
+                                                : 'Eligible in',
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w400,
+                                              color:
+                                                  Colors.black.withOpacity(0.6),
                                             ),
                                           ),
-
-                                          // Foreground circle (actual progress - red)
-                                          CircularProgressIndicator(
-                                            value: eligibilityProgress,
-                                            strokeWidth: 7,
-                                            backgroundColor: Colors.transparent,
-                                            valueColor:
-                                                const AlwaysStoppedAnimation<
-                                                    Color>(
-                                              Color(0xFFD60033),
-                                            ),
-                                          ),
-
-                                          // Center text
-                                          Padding(
-                                            padding:
-                                                const EdgeInsets.only(top: 2),
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Text(
-                                                  daysRemaining == 0
-                                                      ? 'Eligible'
-                                                      : 'Eligible in',
-                                                  style: TextStyle(
-                                                    fontSize: 11,
-                                                    fontWeight: FontWeight.w500,
-                                                    color: Colors.black
-                                                        .withOpacity(0.7),
-                                                  ),
-                                                ),
-                                                const SizedBox(height: 2),
-                                                Text(
-                                                  daysRemaining == 0
-                                                      ? 'now'
-                                                      : '$daysRemaining days',
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                              ],
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            daysRemaining == 0
+                                                ? 'now'
+                                                : '$daysRemaining days',
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
                                             ),
                                           ),
                                         ],
                                       ),
-                                    ),
+                                    ],
                                   ),
                                 ),
-                              ],
-                            ),
+                              )
+                            ],
                           ),
-                        ),
+                        )
                       ],
                     )
                   ],
