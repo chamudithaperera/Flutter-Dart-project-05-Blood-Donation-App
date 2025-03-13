@@ -199,10 +199,10 @@ class ThirdContainer extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             '• ',
             style: TextStyle(
-              color: const Color(0xFFD60033),
+              color: Color(0xFFD60033),
               fontSize: 14,
               fontWeight: FontWeight.bold,
             ),

@@ -21,7 +21,7 @@ class _MainScreenState extends State<MainScreen> {
     const AddFilePage(),
   ];
 
-  PageController _pageController = PageController();
+  final PageController _pageController = PageController();
 
   void _onItemTapped(int index) {
     setState(() {
@@ -44,9 +44,8 @@ class _MainScreenState extends State<MainScreen> {
             _selectedIndex = index;
           });
         },
-        children: _pages,
-        physics:
-            const NeverScrollableScrollPhysics(), // Disables swipe gestures for page change
+        physics: const NeverScrollableScrollPhysics(),
+        children: _pages, // Disables swipe gestures for page change
       ),
       bottomNavigationBar: BottomAppBar(
         shape: const CircularNotchedRectangle(),

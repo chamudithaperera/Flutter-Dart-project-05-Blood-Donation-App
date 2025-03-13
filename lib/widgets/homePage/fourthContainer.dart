@@ -116,10 +116,10 @@ class FourthContainer extends StatelessWidget {
                 color: Colors.black.withOpacity(0.1),
                 width: 1,
               ),
-              columnWidths: {
-                0: FlexColumnWidth(2),
-                1: FlexColumnWidth(2),
-                2: FlexColumnWidth(1.5),
+              columnWidths: const {
+                0: const FlexColumnWidth(2),
+                1: const FlexColumnWidth(2),
+                2: const FlexColumnWidth(1.5),
               },
               children: [
                 TableRow(
