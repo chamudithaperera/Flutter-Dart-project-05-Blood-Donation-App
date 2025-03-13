@@ -1,5 +1,8 @@
-import 'package:blood_donation_app/pages/loginPage.dart';
+//import 'package:blood_donation_app/pages/loginPage.dart';
 import 'package:flutter/material.dart';
+
+import '../google_map.dart';
+import 'mapPage.dart';
 
 class GetStartPage extends StatelessWidget {
   const GetStartPage({super.key});
@@ -66,7 +69,8 @@ class GetStartPage extends StatelessWidget {
                   PageRouteBuilder(
                     transitionDuration: const Duration(milliseconds: 300),
                     pageBuilder: (context, animation, secondaryAnimation) =>
-                        const LoginPage(),
+                        //const LoginPage(),
+                        const GoogleMapFlutter(),
                     transitionsBuilder:
                         (context, animation, secondaryAnimation, child) {
                       return SlideTransition(
