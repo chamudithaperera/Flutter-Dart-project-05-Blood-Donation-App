@@ -1,7 +1,6 @@
 //import 'package:blood_donation_app/pages/loginPage.dart';
 import 'package:flutter/material.dart';
 
-import '../google_map.dart';
 import 'loginPage.dart';
 
 class GetStartPage extends StatelessWidget {
