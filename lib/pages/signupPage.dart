@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-
-import '../widgets/blood_group_dropdown.dart';
+import '../services/firebase_service.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/terms_privacy_section.dart';
-import 'loginPage.dart';
+import 'mainScreen.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -16,34 +15,76 @@ class SignupPage extends StatefulWidget {
 class _SignupPageState extends State<SignupPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _nicController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
-  String? _selectedBloodGroup;
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
+  final FirebaseService _firebaseService = FirebaseService();
+  bool _isLoading = false;
+  String _selectedBloodGroup = 'A+';
+
+  final List<String> _bloodGroups = [
+    'A+',
+    'A-',
+    'B+',
+    'B-',
+    'O+',
+    'O-',
+    'AB+',
+    'AB-'
+  ];
 
   @override
   void dispose() {
     _nameController.dispose();
-    _nicController.dispose();
+    _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _phoneController.dispose();
+    _addressController.dispose();
     super.dispose();
   }
 
-  void _handleSignup() {
+  Future<void> _handleSignup() async {
     if (_formKey.currentState?.validate() ?? false) {
-      if (_selectedBloodGroup == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please select a blood group')),
-        );
-        return;
-      }
+      setState(() {
+        _isLoading = true;
+      });
 
-      // TODO: Implement signup logic
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Sign up button pressed')),
-      );
+      try {
+        await _firebaseService.signUp(
+          email: _emailController.text.trim(),
+          password: _passwordController.text,
+          name: _nameController.text.trim(),
+          phone: _phoneController.text.trim(),
+          address: _addressController.text.trim(),
+          bloodGroup: _selectedBloodGroup,
+        );
+
+        if (mounted) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const MainScreen()),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(e.toString()),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      } finally {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      }
     }
   }
 
@@ -65,11 +106,11 @@ class _SignupPageState extends State<SignupPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  SizedBox(height: size.height * 0.04),
+                  SizedBox(height: size.height * 0.06),
 
                   // Heading
                   const Text(
-                    'Welcome Donators',
+                    'Create Account',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 28,
@@ -82,7 +123,7 @@ class _SignupPageState extends State<SignupPage> {
 
                   // Subheading
                   const Text(
-                    'Login or Sign up to access your account',
+                    'Sign up to start donating blood',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 16,
@@ -92,18 +133,6 @@ class _SignupPageState extends State<SignupPage> {
                   ),
                   SizedBox(height: size.height * 0.06),
 
-                  // Sign Up Text
-                  const Text(
-                    'Sign Up',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  SizedBox(height: size.height * 0.03),
-
                   // Input Fields
                   CustomTextField(
                     hintText: "Full Name",
@@ -111,7 +140,7 @@ class _SignupPageState extends State<SignupPage> {
                     controller: _nameController,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter your full name';
+                        return 'Please enter your name';
                       }
                       return null;
                     },
@@ -119,12 +148,15 @@ class _SignupPageState extends State<SignupPage> {
                   SizedBox(height: size.height * 0.02),
 
                   CustomTextField(
-                    hintText: "NIC Number",
-                    icon: Icons.badge_outlined,
-                    controller: _nicController,
+                    hintText: "Email",
+                    icon: Icons.email_outlined,
+                    controller: _emailController,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter your NIC number';
+                        return 'Please enter your email';
+                      }
+                      if (!value.contains('@')) {
+                        return 'Please enter a valid email';
                       }
                       return null;
                     },
@@ -138,9 +170,10 @@ class _SignupPageState extends State<SignupPage> {
                     controller: _passwordController,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter your password';
-                      } else if (value.length < 6) {
-                        return 'Password must be at least 6 characters long';
+                        return 'Please enter a password';
+                      }
+                      if (value.length < 6) {
+                        return 'Password must be at least 6 characters';
                       }
                       return null;
                     },
@@ -155,7 +188,8 @@ class _SignupPageState extends State<SignupPage> {
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please confirm your password';
-                      } else if (value != _passwordController.text) {
+                      }
+                      if (value != _passwordController.text) {
                         return 'Passwords do not match';
                       }
                       return null;
@@ -163,56 +197,71 @@ class _SignupPageState extends State<SignupPage> {
                   ),
                   SizedBox(height: size.height * 0.02),
 
-                  BloodGroupDropdown(
-                    selectedBloodGroup: _selectedBloodGroup,
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        _selectedBloodGroup = newValue;
-                      });
+                  CustomTextField(
+                    hintText: "Phone Number",
+                    icon: Icons.phone_outlined,
+                    controller: _phoneController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your phone number';
+                      }
+                      return null;
                     },
                   ),
-                  SizedBox(height: size.height * 0.04),
+                  SizedBox(height: size.height * 0.02),
+
+                  CustomTextField(
+                    hintText: "Address",
+                    icon: Icons.location_on_outlined,
+                    controller: _addressController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your address';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: size.height * 0.02),
+
+                  // Blood Group Dropdown
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: _selectedBloodGroup,
+                        isExpanded: true,
+                        icon: const Icon(Icons.arrow_drop_down),
+                        items: _bloodGroups.map((String group) {
+                          return DropdownMenuItem<String>(
+                            value: group,
+                            child: Text(group),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          if (newValue != null) {
+                            setState(() {
+                              _selectedBloodGroup = newValue;
+                            });
+                          }
+                        },
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: size.height * 0.03),
 
                   // Sign Up Button
                   CustomButton(
                     text: 'Sign Up',
-                    onPressed: _handleSignup,
-                  ),
-                  SizedBox(height: size.height * 0.03),
-
-                  // Login Link
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        "Already have an account? ",
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.black54,
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const LoginPage()),
-                          );
-                        },
-                        child: const Text(
-                          'Login',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                            color: Color(0xFFD60033),
-                          ),
-                        ),
-                      ),
-                    ],
+                    onPressed: _isLoading ? null : _handleSignup,
+                    isLoading: _isLoading,
                   ),
 
-                  // Spacer to push content down
-                  SizedBox(height: size.height * 0.04),
+                  // Spacer
+                  SizedBox(height: size.height * 0.15),
 
                   // Terms and Privacy Section
                   const TermsPrivacySection(isSignIn: false),

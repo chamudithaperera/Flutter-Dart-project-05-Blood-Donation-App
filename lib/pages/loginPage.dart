@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import '../services/firebase_service.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/terms_privacy_section.dart';
@@ -15,25 +15,52 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _nicController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final FirebaseService _firebaseService = FirebaseService();
+  bool _isLoading = false;
 
   @override
   void dispose() {
-    _nicController.dispose();
+    _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
 
-  void _handleLogin() {
+  Future<void> _handleLogin() async {
     if (_formKey.currentState?.validate() ?? false) {
-      // Navigate to Home Page
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-                const MainScreen()), // Replace HomePage with your actual home screen widget
-      );
+      setState(() {
+        _isLoading = true;
+      });
+
+      try {
+        await _firebaseService.signIn(
+          email: _emailController.text.trim(),
+          password: _passwordController.text,
+        );
+
+        if (mounted) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const MainScreen()),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(e.toString()),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      } finally {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      }
     }
   }
 
@@ -96,12 +123,15 @@ class _LoginPageState extends State<LoginPage> {
 
                   // Input Fields
                   CustomTextField(
-                    hintText: "NIC Number",
-                    icon: Icons.badge_outlined,
-                    controller: _nicController,
+                    hintText: "Email",
+                    icon: Icons.email_outlined,
+                    controller: _emailController,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter your NIC number';
+                        return 'Please enter your email';
+                      }
+                      if (!value.contains('@')) {
+                        return 'Please enter a valid email';
                       }
                       return null;
                     },
@@ -145,7 +175,8 @@ class _LoginPageState extends State<LoginPage> {
                   // Login Button
                   CustomButton(
                     text: 'Login',
-                    onPressed: _handleLogin,
+                    onPressed: _isLoading ? null : _handleLogin,
+                    isLoading: _isLoading,
                   ),
 
                   SizedBox(height: size.height * 0.03),
