@@ -70,7 +70,7 @@ class _MapPageState extends State<MapPage> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(25),
                 color: Colors.white,
-                border: Border.all(color: Color(0xFFD60033), width: 1.5),
+                border: Border.all(color: const Color(0xFFD60033), width: 1.5),
               ),
               child: const TextField(
                 decoration: InputDecoration(
@@ -115,9 +115,9 @@ class _MapPageState extends State<MapPage> {
                       const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   child: ListTile(
                     title: Text(location['name'],
-                        style: TextStyle(fontWeight: FontWeight.bold)),
+                        style: const TextStyle(fontWeight: FontWeight.bold)),
                     subtitle: Text("${location['date']} | ${location['time']}"),
-                    leading: Icon(Icons.location_on, color: Colors.red),
+                    leading: const Icon(Icons.location_on, color: Colors.red),
                   ),
                 );
               },

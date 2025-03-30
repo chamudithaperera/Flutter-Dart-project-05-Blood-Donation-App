@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 
 import '../google_map.dart';
-import 'mapPage.dart';
 
 class GetStartPage extends StatelessWidget {
   const GetStartPage({super.key});

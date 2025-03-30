@@ -117,9 +117,9 @@ class FourthContainer extends StatelessWidget {
                 width: 1,
               ),
               columnWidths: const {
-                0: const FlexColumnWidth(2),
-                1: const FlexColumnWidth(2),
-                2: const FlexColumnWidth(1.5),
+                0: FlexColumnWidth(2),
+                1: FlexColumnWidth(2),
+                2: FlexColumnWidth(1.5),
               },
               children: [
                 TableRow(
