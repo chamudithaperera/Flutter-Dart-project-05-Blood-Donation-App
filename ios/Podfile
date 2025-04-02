@@ -49,6 +49,19 @@ post_install do |installer|
         'PERMISSION_LOCATION=1',
         'PERMISSION_NOTIFICATIONS=1',
       ]
+
+      # Fix for the unsupported option '-G' error
+      if config.build_settings['OTHER_CFLAGS'].is_a?(Array)
+        config.build_settings['OTHER_CFLAGS'].delete('-G')
+      end
+      if config.build_settings['OTHER_CPLUSPLUSFLAGS'].is_a?(Array)
+        config.build_settings['OTHER_CPLUSPLUSFLAGS'].delete('-G')
+      end
+
+      # Additional build settings to ensure compatibility
+      config.build_settings['ENABLE_BITCODE'] = 'NO'
+      config.build_settings['BUILD_LIBRARY_FOR_DISTRIBUTION'] = 'NO'
+      config.build_settings['VALID_ARCHS'] = 'arm64 x86_64'
     end
   end
 end
