@@ -14,7 +14,7 @@ class MapPage extends StatelessWidget {
         title: const Text("Blood Donation Locations",
             style: TextStyle(color: Colors.black)),
       ),
-      body: const GoogleMapFlutter(),
+      body: const GoogleMap(),
     );
   }
 }

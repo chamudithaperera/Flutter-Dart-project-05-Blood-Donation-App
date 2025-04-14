@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../services/firebase_service.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/terms_privacy_section.dart';
@@ -21,7 +20,6 @@ class _SignupPageState extends State<SignupPage> {
       TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
-  final FirebaseService _firebaseService = FirebaseService();
   bool _isLoading = false;
   String _selectedBloodGroup = 'A+';
 
@@ -54,14 +52,8 @@ class _SignupPageState extends State<SignupPage> {
       });
 
       try {
-        await _firebaseService.signUp(
-          email: _emailController.text.trim(),
-          password: _passwordController.text,
-          name: _nameController.text.trim(),
-          phone: _phoneController.text.trim(),
-          address: _addressController.text.trim(),
-          bloodGroup: _selectedBloodGroup,
-        );
+        // Simulate a brief loading state
+        await Future.delayed(const Duration(seconds: 1));
 
         if (mounted) {
           Navigator.pushReplacement(

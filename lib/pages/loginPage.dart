@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../services/firebase_service.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/terms_privacy_section.dart';
@@ -17,7 +16,6 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final FirebaseService _firebaseService = FirebaseService();
   bool _isLoading = false;
 
   @override
@@ -34,10 +32,8 @@ class _LoginPageState extends State<LoginPage> {
       });
 
       try {
-        await _firebaseService.signIn(
-          email: _emailController.text.trim(),
-          password: _passwordController.text,
-        );
+        // Simulate a brief loading state
+        await Future.delayed(const Duration(seconds: 1));
 
         if (mounted) {
           Navigator.pushReplacement(
