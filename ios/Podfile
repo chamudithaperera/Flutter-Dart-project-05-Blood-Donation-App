@@ -43,13 +43,6 @@ post_install do |installer|
     target.build_configurations.each do |config|
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '14.0'
       
-      # Add the following lines for Firebase
-      config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= [
-        '$(inherited)',
-        'PERMISSION_LOCATION=1',
-        'PERMISSION_NOTIFICATIONS=1',
-      ]
-
       # Fix for the unsupported option '-G' error
       if config.build_settings['OTHER_CFLAGS'].is_a?(Array)
         config.build_settings['OTHER_CFLAGS'].delete('-G')
