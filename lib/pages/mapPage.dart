@@ -6,8 +6,8 @@ class MapPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: const GoogleMap(),
+    return const Scaffold(
+      body: GoogleMap(),
     );
   }
 }
