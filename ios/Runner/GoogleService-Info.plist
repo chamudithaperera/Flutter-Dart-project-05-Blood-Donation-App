@@ -3,17 +3,17 @@
 <plist version="1.0">
 <dict>
 	<key>API_KEY</key>
-	<string>AIzaSyDAd_AyMrl7iEGhGK0lfktftmJ8goPIpQE</string>
+	<string>AIzaSyA-llFAGL28o0cX0pAR4jdeginml9v0jVo</string>
 	<key>GCM_SENDER_ID</key>
-	<string>64820622953</string>
+	<string>656533848679</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>com.example.bloodDonationApp</string>
 	<key>PROJECT_ID</key>
-	<string>bloodhope-61452</string>
+	<string>bloodhopes-83ab8</string>
 	<key>STORAGE_BUCKET</key>
-	<string>bloodhope-61452.firebasestorage.app</string>
+	<string>bloodhopes-83ab8.firebasestorage.app</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:64820622953:ios:bdf5eca16924d385d794f8</string>
+	<string>1:656533848679:ios:d6ee28f304163a97534ac2</string>
 </dict>
 </plist>
