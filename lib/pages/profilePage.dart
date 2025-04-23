@@ -37,24 +37,23 @@ class _ProfilePageState extends State<ProfilePage> {
           });
         } else {
           print('No user document found');
-          // Create a new user document if it doesn't exist
           await _firestore.collection('users').doc(user.uid).set({
-            'name': user.displayName ?? 'User Name',
+            'name': user.displayName ?? 'Your Name',
             'email': user.email ?? '',
-            'bloodGroup': 'Not Set',
-            'phone': 'Not Set',
-            'location': 'Not Set',
-            'nic': 'Not Set',
+            'bloodGroup': 'O+',
+            'phone': 'xxxxxxxxxx',
+            'location': 'Colombo',
+            'nic': 'xxxxxxxxxxxx',
           });
 
           setState(() {
             userData = {
-              'name': user.displayName ?? 'User Name',
+              'name': user.displayName ?? 'Your Name',
               'email': user.email ?? '',
-              'bloodGroup': 'Not Set',
-              'phone': 'Not Set',
-              'location': 'Not Set',
-              'nic': 'Not Set',
+              'bloodGroup': 'O+',
+              'phone': 'xxxxxxxxxx',
+              'location': 'Colombo',
+              'nic': 'xxxxxxxxxxxx',
             };
             isLoading = false;
           });
@@ -76,8 +75,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<void> _signOut() async {
     try {
       await _auth.signOut();
-      Navigator.of(context)
-          .pushReplacementNamed('/login'); // Adjust this to your login route
+      Navigator.of(context).pushReplacementNamed('/login');
     } catch (e) {
       print('Error signing out: $e');
     }
@@ -98,188 +96,179 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFFD60033)),
-          onPressed: () => Navigator.of(context).pop(),
+          icon: const Icon(
+            Icons.menu,
+            color: Color(0xFFD60033),
+          ),
+          onPressed: () {},
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(
+              Icons.person,
+              color: Color(0xFFD60033),
+            ),
+            onPressed: () {},
+          ),
+        ],
       ),
+      backgroundColor: const Color(0xFFFAFAFA),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
-              child: Column(
-                children: [
-                  const SizedBox(height: 20),
-                  // Profile Image
-                  Container(
-                    width: 120,
-                    height: 120,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: const Color(0xFFD60033),
-                      border: Border.all(
-                        color: const Color(0xFFD60033),
-                        width: 2,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    // Top Card with Profile Info
+                    Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.1),
+                            spreadRadius: 1,
+                            blurRadius: 10,
+                          ),
+                        ],
                       ),
-                    ),
-                    child: const Icon(
-                      Icons.person,
-                      size: 80,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  // User Name
-                  Text(
-                    userData?['name'] ?? 'Your Name',
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  // NIC Number
-                  Text(
-                    'NIC No: ${userData?['nic'] ?? 'Not Set'}',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  // Scan QR and My QR buttons
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 32),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: () {
-                              // Handle Scan QR
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              foregroundColor: Colors.black87,
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
-                                side: BorderSide(color: Colors.grey[300]!),
-                              ),
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 24),
+                          // Profile Image
+                          Container(
+                            width: 100,
+                            height: 100,
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Color(0xFFD60033),
                             ),
-                            child: const Text(
-                              'Scan QR',
-                              style: TextStyle(fontSize: 16),
+                            child: const Icon(
+                              Icons.person,
+                              size: 60,
+                              color: Colors.white,
                             ),
                           ),
+                          const SizedBox(height: 16),
+                          // User Name
+                          Text(
+                            userData?['name'] ?? 'Your Name',
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          // NIC Number
+                          Text(
+                            'NIC No: ${userData?['nic'] ?? 'xxxxxxxxxxxx'}',
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey,
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    // QR Buttons Row
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildOutlinedButton('Scan QR', () {}),
                         ),
                         const SizedBox(width: 16),
                         Expanded(
-                          child: ElevatedButton(
-                            onPressed: () {
-                              // Handle My QR
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              foregroundColor: Colors.black87,
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
-                                side: BorderSide(color: Colors.grey[300]!),
-                              ),
-                            ),
-                            child: const Text(
-                              'My QR',
-                              style: TextStyle(fontSize: 16),
-                            ),
+                          child: _buildOutlinedButton('My QR', () {}),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    // Info Card
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.1),
+                            spreadRadius: 1,
+                            blurRadius: 10,
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildInfoRow(
+                              'Blood group:', userData?['bloodGroup'] ?? 'O+'),
+                          const SizedBox(height: 12),
+                          _buildInfoRow('Contact Number:',
+                              userData?['phone'] ?? 'xxxxxxxxxx'),
+                          const SizedBox(height: 12),
+                          _buildInfoRow(
+                              'Location:', userData?['location'] ?? 'Colombo'),
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 32),
-                  // User Information Card
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 32),
-                    padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.1),
-                          spreadRadius: 1,
-                          blurRadius: 10,
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      children: [
-                        _buildInfoRow('Blood group:',
-                            userData?['bloodGroup'] ?? 'Not Set'),
-                        const SizedBox(height: 16),
-                        _buildInfoRow(
-                            'Contact Number:', userData?['phone'] ?? 'Not Set'),
-                        const SizedBox(height: 16),
-                        _buildInfoRow(
-                            'Location:', userData?['location'] ?? 'Not Set'),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 32),
-                  // Settings Button
-                  _buildButton('Settings', Icons.settings, () {
-                    // Handle settings
-                  }),
-                  const SizedBox(height: 16),
-                  // Log out Button
-                  _buildButton('Log out', Icons.logout, _signOut),
-                  const SizedBox(height: 32),
-                ],
+                    const SizedBox(height: 16),
+                    // Settings Button
+                    _buildOutlinedButton('Settings', () {}),
+                    const SizedBox(height: 16),
+                    // Log out Button
+                    _buildOutlinedButton('Log out', _signOut),
+                  ],
+                ),
               ),
             ),
     );
   }
 
   Widget _buildInfoRow(String label, String value) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.grey[600],
+    return RichText(
+      text: TextSpan(
+        style: const TextStyle(fontSize: 14, color: Colors.black),
+        children: [
+          TextSpan(
+            text: label + ' ',
+            style: const TextStyle(
+              fontWeight: FontWeight.w500,
+            ),
           ),
-        ),
-        const SizedBox(width: 8),
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
+          TextSpan(
+            text: value,
+            style: const TextStyle(
+              color: Colors.grey,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
-  Widget _buildButton(String text, IconData icon, VoidCallback onPressed) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 32),
-      child: SizedBox(
-        width: double.infinity,
-        child: ElevatedButton(
-          onPressed: onPressed,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.white,
-            foregroundColor: Colors.black87,
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30),
-              side: BorderSide(color: Colors.grey[300]!),
-            ),
+  Widget _buildOutlinedButton(String text, VoidCallback onPressed) {
+    return SizedBox(
+      width: double.infinity,
+      height: 50,
+      child: OutlinedButton(
+        onPressed: onPressed,
+        style: OutlinedButton.styleFrom(
+          backgroundColor: Colors.white,
+          side: const BorderSide(color: Colors.grey),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(25),
           ),
-          child: Text(
-            text,
-            style: const TextStyle(fontSize: 16),
+        ),
+        child: Text(
+          text,
+          style: const TextStyle(
+            color: Colors.black87,
+            fontSize: 16,
           ),
         ),
       ),
