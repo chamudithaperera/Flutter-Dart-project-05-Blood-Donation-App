@@ -25,6 +25,7 @@ class DonationHistory {
   // Convert Firestore document to DonationHistory object
   factory DonationHistory.fromFirestore(DocumentSnapshot doc) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+    print('Fetched data: $data'); // Debug print
     return DonationHistory(
       dateTime: (data['dateTime'] as Timestamp).toDate(),
       place: data['place'] ?? '',
@@ -66,15 +67,17 @@ class _HistoryPageState extends State<HistoryPage> {
   void initState() {
     super.initState();
     _initializeStream();
+    print('Current User ID: ${currentUser?.uid}'); // Debug print
   }
 
   void _initializeStream() {
     if (currentUser != null) {
       _donationsStream = FirebaseFirestore.instance
           .collection('donations')
-          .where('userId', isEqualTo: currentUser!.uid)
           .orderBy('dateTime', descending: true)
           .snapshots();
+
+      print('Stream initialized for donations collection'); // Debug print
     }
   }
 
@@ -130,6 +133,7 @@ class _HistoryPageState extends State<HistoryPage> {
               stream: _donationsStream,
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
+                  print('Stream error: ${snapshot.error}'); // Debug print
                   return Center(
                     child: Text('Error: ${snapshot.error}'),
                   );
@@ -142,18 +146,23 @@ class _HistoryPageState extends State<HistoryPage> {
                 }
 
                 if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  print('No data found in donations collection'); // Debug print
                   return const Center(
                     child: Text('No donation history found'),
                   );
                 }
 
+                print(
+                    'Number of documents: ${snapshot.data!.docs.length}'); // Debug print
+
                 return ListView.builder(
                   padding: const EdgeInsets.all(16),
                   itemCount: snapshot.data!.docs.length,
                   itemBuilder: (context, index) {
-                    final donation = DonationHistory.fromFirestore(
-                      snapshot.data!.docs[index],
-                    );
+                    final doc = snapshot.data!.docs[index];
+                    print('Document data: ${doc.data()}'); // Debug print
+
+                    final donation = DonationHistory.fromFirestore(doc);
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 16),
                       child: _buildHistoryCard(
