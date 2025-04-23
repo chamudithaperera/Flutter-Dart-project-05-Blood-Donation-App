@@ -189,13 +189,7 @@ Please ensure:
         shadowColor: Colors.black.withOpacity(0.3),
         leading: appBarLeading,
         title: appBarText,
-        actions: <Widget>[
-          if (appBarAction != null) ...appBarAction!,
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: _checkAuth,
-          ),
-        ],
+        actions: getAppBarActions(context),
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())

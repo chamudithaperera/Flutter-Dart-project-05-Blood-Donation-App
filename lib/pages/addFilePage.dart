@@ -8,12 +8,11 @@ class AddFilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xffffffff),
-        elevation: 2, // Increases shadow depth
-        shadowColor: Colors.black.withOpacity(0.3),
+        backgroundColor: Colors.white,
+        elevation: 0,
         leading: appBarLeading,
         title: appBarText,
-        actions: appBarAction,
+        actions: getAppBarActions(context),
       ),
     );
   }
