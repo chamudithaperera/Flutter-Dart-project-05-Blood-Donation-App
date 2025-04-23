@@ -32,10 +32,12 @@ class _LoginPageState extends State<LoginPage> {
         _isLoading = true;
       });
       try {
+        print('Starting login process...');
         await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
         );
+        print('Login successful!');
         if (mounted) {
           Navigator.pushReplacement(
             context,
@@ -43,6 +45,7 @@ class _LoginPageState extends State<LoginPage> {
           );
         }
       } on FirebaseAuthException catch (e) {
+        print('Firebase Auth Error: ${e.code} - ${e.message}');
         String message;
         switch (e.code) {
           case 'user-not-found':

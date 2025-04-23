@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/terms_privacy_section.dart';
-import 'mainScreen.dart';
 import 'loginPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -54,15 +53,17 @@ class _SignupPageState extends State<SignupPage> {
         _isLoading = true;
       });
       try {
+        print('Starting signup process...');
         UserCredential userCredential =
             await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
         );
+        print('Firebase Auth successful, updating display name...');
         await userCredential.user
             ?.updateDisplayName(_nameController.text.trim());
 
-        // Save additional user details in Firestore
+        print('Saving user data to Firestore...');
         await FirebaseFirestore.instance
             .collection('users')
             .doc(userCredential.user!.uid)
@@ -74,6 +75,7 @@ class _SignupPageState extends State<SignupPage> {
           'bloodGroup': _selectedBloodGroup,
           'createdAt': FieldValue.serverTimestamp(),
         });
+        print('User data saved successfully!');
         if (mounted) {
           setState(() {
             _isLoading = false;
