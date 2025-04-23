@@ -75,30 +75,50 @@ class HistoryPage extends StatefulWidget {
 class _HistoryPageState extends State<HistoryPage> {
   final TextEditingController _searchController = TextEditingController();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final User? currentUser = FirebaseAuth.instance.currentUser;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  bool _isLoading = true;
+  String? _error;
 
   @override
   void initState() {
     super.initState();
-    _checkFirestoreConnection();
+    _checkAuth();
   }
 
-  Future<void> _checkFirestoreConnection() async {
+  Future<void> _checkAuth() async {
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
+
     try {
-      print('Checking Firestore connection...');
-      print('Current User ID: ${currentUser?.uid}');
-
-      // Try to get a single document to verify connection
-      QuerySnapshot snapshot =
-          await _firestore.collection('donations').limit(1).get();
-      print('Connection successful');
-      print('Documents found: ${snapshot.docs.length}');
-
-      if (snapshot.docs.isNotEmpty) {
-        print('Sample document data: ${snapshot.docs.first.data()}');
+      // Check if user is logged in
+      final user = _auth.currentUser;
+      if (user == null) {
+        // If not logged in, try to wait for auth state to change
+        await Future.delayed(const Duration(seconds: 1));
+        final updatedUser = _auth.currentUser;
+        if (updatedUser == null) {
+          setState(() {
+            _error = 'Please log in to view donation history';
+            _isLoading = false;
+          });
+          return;
+        }
       }
+
+      // Test Firestore connection
+      await _firestore.collection('donations').limit(1).get();
+
+      setState(() {
+        _isLoading = false;
+      });
     } catch (e) {
-      print('Firestore connection error: $e');
+      print('Error during initialization: $e');
+      setState(() {
+        _error = 'Error connecting to database: $e';
+        _isLoading = false;
+      });
     }
   }
 
@@ -111,14 +131,6 @@ class _HistoryPageState extends State<HistoryPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (currentUser == null) {
-      return const Scaffold(
-        body: Center(
-          child: Text('Please log in to view your donation history'),
-        ),
-      );
-    }
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -128,104 +140,117 @@ class _HistoryPageState extends State<HistoryPage> {
         title: appBarText,
         actions: appBarAction,
       ),
-      body: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(16),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: 'Search a history',
-                hintStyle: const TextStyle(color: Colors.grey),
-                prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                filled: true,
-                fillColor: Colors.white,
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide(color: Colors.grey.shade300),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: const BorderSide(color: Color(0xFFD60033)),
-                ),
-              ),
-              onChanged: (value) {
-                setState(() {
-                  // Search functionality will be implemented here
-                });
-              },
-            ),
-          ),
-          Expanded(
-            child: StreamBuilder<QuerySnapshot>(
-              stream: _getDonationsStream(),
-              builder: (context, snapshot) {
-                // Print detailed stream state
-                print('Stream state: ${snapshot.connectionState}');
-                if (snapshot.hasError) {
-                  print('Stream error: ${snapshot.error}');
-                  return Center(
-                    child: Text('Error loading donations: ${snapshot.error}'),
-                  );
-                }
-
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-
-                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  print('No documents found in snapshot');
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text('No donation history found'),
-                        const SizedBox(height: 8),
-                        Text(
-                            'Debug info: ${snapshot.data?.docs.length ?? 0} documents'),
-                      ],
-                    ),
-                  );
-                }
-
-                print(
-                    'Building list with ${snapshot.data!.docs.length} documents');
-                return ListView.builder(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: snapshot.data!.docs.length,
-                  itemBuilder: (context, index) {
-                    try {
-                      final doc = snapshot.data!.docs[index];
-                      print('Processing document $index: ${doc.data()}');
-                      final donation = DonationHistory.fromFirestore(doc);
-
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 16),
-                        child: _buildHistoryCard(
-                          date:
-                              '${donation.dateTime.year}-${donation.dateTime.month.toString().padLeft(2, '0')}-${donation.dateTime.day.toString().padLeft(2, '0')}',
-                          time:
-                              '${donation.dateTime.hour.toString().padLeft(2, '0')}:${donation.dateTime.minute.toString().padLeft(2, '0')} ${donation.dateTime.hour < 12 ? 'AM' : 'PM'}',
-                          place: donation.place,
-                          volume: '${donation.volume} ml',
-                          bloodGroup: donation.bloodGroup,
-                          isCompleted: donation.isCompleted,
-                          attempt: donation.attempt,
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _error != null
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(_error!, style: const TextStyle(color: Colors.red)),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: _checkAuth,
+                        child: const Text('Retry'),
+                      ),
+                    ],
+                  ),
+                )
+              : Column(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      child: TextField(
+                        controller: _searchController,
+                        decoration: InputDecoration(
+                          hintText: 'Search a history',
+                          hintStyle: const TextStyle(color: Colors.grey),
+                          prefixIcon:
+                              const Icon(Icons.search, color: Colors.grey),
+                          filled: true,
+                          fillColor: Colors.white,
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: BorderSide(color: Colors.grey.shade300),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide:
+                                const BorderSide(color: Color(0xFFD60033)),
+                          ),
                         ),
-                      );
-                    } catch (e) {
-                      print('Error building card for document $index: $e');
-                      return const SizedBox.shrink();
-                    }
-                  },
-                );
-              },
-            ),
-          ),
-        ],
-      ),
+                      ),
+                    ),
+                    Expanded(
+                      child: StreamBuilder<QuerySnapshot>(
+                        stream: _getDonationsStream(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) {
+                            return Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Error loading donations:\n${snapshot.error}',
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(color: Colors.red),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  ElevatedButton(
+                                    onPressed: _checkAuth,
+                                    child: const Text('Retry'),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+
+                          final docs = snapshot.data?.docs ?? [];
+                          if (docs.isEmpty) {
+                            return const Center(
+                              child: Text('No donation history found'),
+                            );
+                          }
+
+                          return ListView.builder(
+                            padding: const EdgeInsets.all(16),
+                            itemCount: docs.length,
+                            itemBuilder: (context, index) {
+                              try {
+                                final donation =
+                                    DonationHistory.fromFirestore(docs[index]);
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 16),
+                                  child: _buildHistoryCard(
+                                    date:
+                                        '${donation.dateTime.year}-${donation.dateTime.month.toString().padLeft(2, '0')}-${donation.dateTime.day.toString().padLeft(2, '0')}',
+                                    time:
+                                        '${donation.dateTime.hour.toString().padLeft(2, '0')}:${donation.dateTime.minute.toString().padLeft(2, '0')} ${donation.dateTime.hour < 12 ? 'AM' : 'PM'}',
+                                    place: donation.place,
+                                    volume: '${donation.volume} ml',
+                                    bloodGroup: donation.bloodGroup,
+                                    isCompleted: donation.isCompleted,
+                                    attempt: donation.attempt,
+                                  ),
+                                );
+                              } catch (e) {
+                                print('Error building card: $e');
+                                return const SizedBox.shrink();
+                              }
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
     );
   }
 
