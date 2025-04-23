@@ -1,3 +1,4 @@
+import 'package:blood_donation_app/widgets/main_Appbar.dart';
 import 'package:flutter/material.dart';
 
 class AddFilePage extends StatelessWidget {
@@ -7,13 +8,12 @@ class AddFilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add New File'),
-      ),
-      body: const Center(
-        child: Text(
-          'Add New File Page Content',
-          style: TextStyle(fontSize: 24),
-        ),
+        backgroundColor: const Color(0xffffffff),
+        elevation: 2, // Increases shadow depth
+        shadowColor: Colors.black.withOpacity(0.3),
+        leading: appBarLeading,
+        title: appBarText,
+        actions: appBarAction,
       ),
     );
   }
