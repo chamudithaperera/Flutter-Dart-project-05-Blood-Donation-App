@@ -33,23 +33,12 @@ class _HomePageState extends State<HomePage> {
       if (user != null) {
         final DocumentSnapshot doc =
             await _firestore.collection('users').doc(user.uid).get();
-
         if (doc.exists) {
           setState(() {
             userData = doc.data() as Map<String, dynamic>;
             isLoading = false;
           });
-        } else {
-          print('No user data found');
-          setState(() {
-            isLoading = false;
-          });
         }
-      } else {
-        print('No user logged in');
-        setState(() {
-          isLoading = false;
-        });
       }
     } catch (e) {
       print('Error loading user data: $e');
@@ -99,15 +88,6 @@ class _HomePageState extends State<HomePage> {
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
-                              const SizedBox(height: 8),
-                              if (userData != null) ...[
-                                _buildInfoText(
-                                    'Blood Group: ${userData?['bloodGroup'] ?? 'Not set'}'),
-                                _buildInfoText(
-                                    'Contact: ${userData?['phone'] ?? 'Not set'}'),
-                                _buildInfoText(
-                                    'Location: ${userData?['location'] ?? 'Not set'}'),
-                              ],
                             ],
                           ),
                         ],
@@ -120,19 +100,5 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
               ));
-  }
-
-  Widget _buildInfoText(String text) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 4),
-      child: Text(
-        text,
-        style: TextStyle(
-          fontSize: 14,
-          color: Colors.grey[600],
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-    );
   }
 }

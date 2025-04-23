@@ -25,14 +25,45 @@ class _ProfilePageState extends State<ProfilePage> {
     try {
       final User? user = _auth.currentUser;
       if (user != null) {
+        print('Loading data for user: ${user.uid}');
         final DocumentSnapshot doc =
             await _firestore.collection('users').doc(user.uid).get();
+
         if (doc.exists) {
+          print('Document data: ${doc.data()}');
           setState(() {
             userData = doc.data() as Map<String, dynamic>;
             isLoading = false;
           });
+        } else {
+          print('No user document found');
+          // Create a new user document if it doesn't exist
+          await _firestore.collection('users').doc(user.uid).set({
+            'name': user.displayName ?? 'User Name',
+            'email': user.email ?? '',
+            'bloodGroup': 'Not Set',
+            'phone': 'Not Set',
+            'location': 'Not Set',
+            'nic': 'Not Set',
+          });
+
+          setState(() {
+            userData = {
+              'name': user.displayName ?? 'User Name',
+              'email': user.email ?? '',
+              'bloodGroup': 'Not Set',
+              'phone': 'Not Set',
+              'location': 'Not Set',
+              'nic': 'Not Set',
+            };
+            isLoading = false;
+          });
         }
+      } else {
+        print('No user is currently logged in');
+        setState(() {
+          isLoading = false;
+        });
       }
     } catch (e) {
       print('Error loading user data: $e');
@@ -45,7 +76,8 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<void> _signOut() async {
     try {
       await _auth.signOut();
-      // Navigate to login page or handle sign out in your app's navigation
+      Navigator.of(context)
+          .pushReplacementNamed('/login'); // Adjust this to your login route
     } catch (e) {
       print('Error signing out: $e');
     }
@@ -65,12 +97,10 @@ class _ProfilePageState extends State<ProfilePage> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.person, color: Color(0xFFD60033)),
-            onPressed: () {},
-          ),
-        ],
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Color(0xFFD60033)),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -108,7 +138,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   const SizedBox(height: 8),
                   // NIC Number
                   Text(
-                    'NIC No: ${userData?['nic'] ?? 'xxxxxxxxxxxx'}',
+                    'NIC No: ${userData?['nic'] ?? 'Not Set'}',
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.grey[600],
@@ -182,14 +212,14 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                     child: Column(
                       children: [
-                        _buildInfoRow(
-                            'Blood group:', userData?['bloodGroup'] ?? 'O+'),
-                        const SizedBox(height: 16),
-                        _buildInfoRow('Contact Number:',
-                            userData?['phone'] ?? 'xxxxxxxxxx'),
+                        _buildInfoRow('Blood group:',
+                            userData?['bloodGroup'] ?? 'Not Set'),
                         const SizedBox(height: 16),
                         _buildInfoRow(
-                            'Location:', userData?['location'] ?? 'Colombo'),
+                            'Contact Number:', userData?['phone'] ?? 'Not Set'),
+                        const SizedBox(height: 16),
+                        _buildInfoRow(
+                            'Location:', userData?['location'] ?? 'Not Set'),
                       ],
                     ),
                   ),
