@@ -22,19 +22,33 @@ class DonationHistory {
     required this.userId,
   });
 
-  // Convert Firestore document to DonationHistory object
   factory DonationHistory.fromFirestore(DocumentSnapshot doc) {
-    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-    print('Fetched data: $data'); // Debug print
-    return DonationHistory(
-      dateTime: (data['dateTime'] as Timestamp).toDate(),
-      place: data['place'] ?? '',
-      volume: data['volume']?.toString() ?? '',
-      bloodGroup: data['bloodGroup'] ?? '',
-      isCompleted: data['isCompleted'] ?? false,
-      attempt: data['attempt'] ?? 1,
-      userId: data['userId'] ?? '',
-    );
+    try {
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      print('Raw Firestore data: $data'); // Debug print
+
+      // Safely handle the dateTime field
+      DateTime parsedDateTime;
+      try {
+        parsedDateTime = (data['dateTime'] as Timestamp).toDate();
+      } catch (e) {
+        print('Error parsing dateTime: $e');
+        parsedDateTime = DateTime.now();
+      }
+
+      return DonationHistory(
+        dateTime: parsedDateTime,
+        place: data['place']?.toString() ?? 'Unknown',
+        volume: data['volume']?.toString() ?? '0',
+        bloodGroup: data['bloodGroup']?.toString() ?? 'Unknown',
+        isCompleted: data['isCompleted'] ?? false,
+        attempt: (data['attempt'] ?? 1) as int,
+        userId: data['userId']?.toString() ?? '',
+      );
+    } catch (e) {
+      print('Error creating DonationHistory: $e');
+      rethrow;
+    }
   }
 
   // Convert DonationHistory object to Firestore document
@@ -60,25 +74,39 @@ class HistoryPage extends StatefulWidget {
 
 class _HistoryPageState extends State<HistoryPage> {
   final TextEditingController _searchController = TextEditingController();
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final User? currentUser = FirebaseAuth.instance.currentUser;
-  Stream<QuerySnapshot>? _donationsStream;
 
   @override
   void initState() {
     super.initState();
-    _initializeStream();
-    print('Current User ID: ${currentUser?.uid}'); // Debug print
+    _checkFirestoreConnection();
   }
 
-  void _initializeStream() {
-    if (currentUser != null) {
-      _donationsStream = FirebaseFirestore.instance
-          .collection('donations')
-          .orderBy('dateTime', descending: true)
-          .snapshots();
+  Future<void> _checkFirestoreConnection() async {
+    try {
+      print('Checking Firestore connection...');
+      print('Current User ID: ${currentUser?.uid}');
 
-      print('Stream initialized for donations collection'); // Debug print
+      // Try to get a single document to verify connection
+      QuerySnapshot snapshot =
+          await _firestore.collection('donations').limit(1).get();
+      print('Connection successful');
+      print('Documents found: ${snapshot.docs.length}');
+
+      if (snapshot.docs.isNotEmpty) {
+        print('Sample document data: ${snapshot.docs.first.data()}');
+      }
+    } catch (e) {
+      print('Firestore connection error: $e');
     }
+  }
+
+  Stream<QuerySnapshot> _getDonationsStream() {
+    return _firestore
+        .collection('donations')
+        .orderBy('dateTime', descending: true)
+        .snapshots();
   }
 
   @override
@@ -130,12 +158,14 @@ class _HistoryPageState extends State<HistoryPage> {
           ),
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
-              stream: _donationsStream,
+              stream: _getDonationsStream(),
               builder: (context, snapshot) {
+                // Print detailed stream state
+                print('Stream state: ${snapshot.connectionState}');
                 if (snapshot.hasError) {
-                  print('Stream error: ${snapshot.error}'); // Debug print
+                  print('Stream error: ${snapshot.error}');
                   return Center(
-                    child: Text('Error: ${snapshot.error}'),
+                    child: Text('Error loading donations: ${snapshot.error}'),
                   );
                 }
 
@@ -146,37 +176,49 @@ class _HistoryPageState extends State<HistoryPage> {
                 }
 
                 if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  print('No data found in donations collection'); // Debug print
-                  return const Center(
-                    child: Text('No donation history found'),
+                  print('No documents found in snapshot');
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text('No donation history found'),
+                        const SizedBox(height: 8),
+                        Text(
+                            'Debug info: ${snapshot.data?.docs.length ?? 0} documents'),
+                      ],
+                    ),
                   );
                 }
 
                 print(
-                    'Number of documents: ${snapshot.data!.docs.length}'); // Debug print
-
+                    'Building list with ${snapshot.data!.docs.length} documents');
                 return ListView.builder(
                   padding: const EdgeInsets.all(16),
                   itemCount: snapshot.data!.docs.length,
                   itemBuilder: (context, index) {
-                    final doc = snapshot.data!.docs[index];
-                    print('Document data: ${doc.data()}'); // Debug print
+                    try {
+                      final doc = snapshot.data!.docs[index];
+                      print('Processing document $index: ${doc.data()}');
+                      final donation = DonationHistory.fromFirestore(doc);
 
-                    final donation = DonationHistory.fromFirestore(doc);
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 16),
-                      child: _buildHistoryCard(
-                        date:
-                            '${donation.dateTime.year}-${donation.dateTime.month.toString().padLeft(2, '0')}-${donation.dateTime.day.toString().padLeft(2, '0')}',
-                        time:
-                            '${donation.dateTime.hour.toString().padLeft(2, '0')}:${donation.dateTime.minute.toString().padLeft(2, '0')} ${donation.dateTime.hour < 12 ? 'AM' : 'PM'}',
-                        place: donation.place,
-                        volume: '${donation.volume} ml',
-                        bloodGroup: donation.bloodGroup,
-                        isCompleted: donation.isCompleted,
-                        attempt: donation.attempt,
-                      ),
-                    );
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: _buildHistoryCard(
+                          date:
+                              '${donation.dateTime.year}-${donation.dateTime.month.toString().padLeft(2, '0')}-${donation.dateTime.day.toString().padLeft(2, '0')}',
+                          time:
+                              '${donation.dateTime.hour.toString().padLeft(2, '0')}:${donation.dateTime.minute.toString().padLeft(2, '0')} ${donation.dateTime.hour < 12 ? 'AM' : 'PM'}',
+                          place: donation.place,
+                          volume: '${donation.volume} ml',
+                          bloodGroup: donation.bloodGroup,
+                          isCompleted: donation.isCompleted,
+                          attempt: donation.attempt,
+                        ),
+                      );
+                    } catch (e) {
+                      print('Error building card for document $index: $e');
+                      return const SizedBox.shrink();
+                    }
                   },
                 );
               },
