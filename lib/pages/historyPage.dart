@@ -98,7 +98,7 @@ class _HistoryPageState extends State<HistoryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xffffffff),
+        backgroundColor: Colors.white,
         elevation: 2,
         shadowColor: Colors.black.withOpacity(0.3),
         leading: appBarLeading,
@@ -108,8 +108,8 @@ class _HistoryPageState extends State<HistoryPage> {
       body: Column(
         children: [
           // Search Bar
-          Padding(
-            padding: const EdgeInsets.all(16.0),
+          Container(
+            padding: const EdgeInsets.all(16),
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
@@ -130,7 +130,7 @@ class _HistoryPageState extends State<HistoryPage> {
             ),
           ),
 
-          // Donation History List
+          // History List
           Expanded(
             child: StreamBuilder<List<DonationHistory>>(
               stream: _getDonationHistory(),
