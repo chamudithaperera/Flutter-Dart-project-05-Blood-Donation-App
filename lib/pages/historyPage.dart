@@ -93,41 +93,72 @@ class _HistoryPageState extends State<HistoryPage> {
     });
 
     try {
-      // Check if user is logged in
+      // Check authentication status
       _currentUser = _auth.currentUser;
 
       if (_currentUser == null) {
+        print('DEBUG: No user is currently logged in');
         setState(() {
-          _error = 'Please log in to view donation history';
+          _error =
+              'Please log in to view donation history. No user is currently logged in.';
           _isLoading = false;
         });
         return;
       }
 
-      print('Current User ID: ${_currentUser?.uid}'); // Debug print
-      print('Current User Email: ${_currentUser?.email}'); // Debug print
+      // Print detailed user information
+      print('DEBUG: Authentication Status');
+      print('User ID: ${_currentUser?.uid}');
+      print('Email: ${_currentUser?.email}');
+      print('Email Verified: ${_currentUser?.emailVerified}');
+      print(
+          'Auth Provider: ${_currentUser?.providerData.map((e) => e.providerId)}');
 
-      // Test Firestore connection with a more specific query
+      // Test Firestore access
       try {
-        await _firestore
+        print('DEBUG: Attempting to access Firestore');
+        print(
+            'DEBUG: Querying donations collection for user: ${_currentUser?.uid}');
+
+        // Try to query the donations collection
+        final QuerySnapshot querySnapshot = await _firestore
             .collection('donations')
             .where('userId', isEqualTo: _currentUser?.uid)
             .limit(1)
             .get();
 
+        print('DEBUG: Query successful');
+        print('DEBUG: Found ${querySnapshot.docs.length} documents');
+
         setState(() {
           _isLoading = false;
         });
       } catch (firestoreError) {
-        print('Firestore Error: $firestoreError'); // Debug print
+        print('DEBUG: Firestore Error Details:');
+        print(firestoreError.toString());
+
+        if (firestoreError is FirebaseException) {
+          print('Error Code: ${firestoreError.code}');
+          print('Error Message: ${firestoreError.message}');
+        }
+
         setState(() {
-          _error =
-              'Error accessing donation records. Please check your permissions.';
+          _error = '''
+Firestore Access Error:
+${firestoreError is FirebaseException ? firestoreError.message : firestoreError}
+
+Please ensure:
+1. You are properly logged in
+2. The 'donations' collection exists
+3. Firestore rules are properly set
+''';
           _isLoading = false;
         });
       }
     } catch (authError) {
-      print('Auth Error: $authError'); // Debug print
+      print('DEBUG: Authentication Error:');
+      print(authError.toString());
+
       setState(() {
         _error = 'Authentication error: $authError';
         _isLoading = false;
@@ -136,8 +167,12 @@ class _HistoryPageState extends State<HistoryPage> {
   }
 
   Stream<QuerySnapshot> _getDonationsStream() {
-    if (_currentUser == null) return const Stream.empty();
+    if (_currentUser == null) {
+      print('DEBUG: No user available for stream');
+      return const Stream.empty();
+    }
 
+    print('DEBUG: Creating stream for user: ${_currentUser?.uid}');
     return _firestore
         .collection('donations')
         .where('userId', isEqualTo: _currentUser?.uid)
@@ -154,22 +189,41 @@ class _HistoryPageState extends State<HistoryPage> {
         shadowColor: Colors.black.withOpacity(0.3),
         leading: appBarLeading,
         title: appBarText,
-        actions: appBarAction,
+        actions: <Widget>[
+          if (appBarAction != null) ...appBarAction!,
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: _checkAuth,
+          ),
+        ],
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _error != null
               ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(_error!, style: const TextStyle(color: Colors.red)),
-                      const SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: _checkAuth,
-                        child: const Text('Retry'),
-                      ),
-                    ],
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.error_outline,
+                          color: Colors.red,
+                          size: 48,
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          _error!,
+                          style: const TextStyle(color: Colors.red),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: _checkAuth,
+                          child: const Text('Retry'),
+                        ),
+                      ],
+                    ),
                   ),
                 )
               : Column(
