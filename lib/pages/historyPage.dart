@@ -78,6 +78,7 @@ class _HistoryPageState extends State<HistoryPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   bool _isLoading = true;
   String? _error;
+  User? _currentUser;
 
   @override
   void initState() {
@@ -93,38 +94,53 @@ class _HistoryPageState extends State<HistoryPage> {
 
     try {
       // Check if user is logged in
-      final user = _auth.currentUser;
-      if (user == null) {
-        // If not logged in, try to wait for auth state to change
-        await Future.delayed(const Duration(seconds: 1));
-        final updatedUser = _auth.currentUser;
-        if (updatedUser == null) {
-          setState(() {
-            _error = 'Please log in to view donation history';
-            _isLoading = false;
-          });
-          return;
-        }
+      _currentUser = _auth.currentUser;
+
+      if (_currentUser == null) {
+        setState(() {
+          _error = 'Please log in to view donation history';
+          _isLoading = false;
+        });
+        return;
       }
 
-      // Test Firestore connection
-      await _firestore.collection('donations').limit(1).get();
+      print('Current User ID: ${_currentUser?.uid}'); // Debug print
+      print('Current User Email: ${_currentUser?.email}'); // Debug print
 
+      // Test Firestore connection with a more specific query
+      try {
+        await _firestore
+            .collection('donations')
+            .where('userId', isEqualTo: _currentUser?.uid)
+            .limit(1)
+            .get();
+
+        setState(() {
+          _isLoading = false;
+        });
+      } catch (firestoreError) {
+        print('Firestore Error: $firestoreError'); // Debug print
+        setState(() {
+          _error =
+              'Error accessing donation records. Please check your permissions.';
+          _isLoading = false;
+        });
+      }
+    } catch (authError) {
+      print('Auth Error: $authError'); // Debug print
       setState(() {
-        _isLoading = false;
-      });
-    } catch (e) {
-      print('Error during initialization: $e');
-      setState(() {
-        _error = 'Error connecting to database: $e';
+        _error = 'Authentication error: $authError';
         _isLoading = false;
       });
     }
   }
 
   Stream<QuerySnapshot> _getDonationsStream() {
+    if (_currentUser == null) return const Stream.empty();
+
     return _firestore
         .collection('donations')
+        .where('userId', isEqualTo: _currentUser?.uid)
         .orderBy('dateTime', descending: true)
         .snapshots();
   }
