@@ -1,4 +1,4 @@
-const { createUser } = require('../services/user.service');
+const { createUser, findUserByEmailAndPassword } = require('../services/user.service');
 
 async function registerUser(req, res) {
   try {
@@ -16,4 +16,21 @@ async function registerUser(req, res) {
   }
 }
 
-module.exports = { registerUser }; 
+// Login controller
+async function loginUser(req, res) {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email and password are required.' });
+    }
+    const user = await findUserByEmailAndPassword(email, password);
+    if (!user) {
+      return res.status(401).json({ message: 'Invalid email or password.' });
+    }
+    res.status(200).json({ message: 'Login successful', user });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+}
+
+module.exports = { registerUser, loginUser }; 

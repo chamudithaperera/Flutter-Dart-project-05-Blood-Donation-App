@@ -3,6 +3,8 @@ import '../widgets/custom_button.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/terms_privacy_section.dart';
 import 'loginPage.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 // Removed: import 'package:firebase_auth/firebase_auth.dart';
 // Removed: import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -52,34 +54,86 @@ class _SignupPageState extends State<SignupPage> {
       setState(() {
         _isLoading = true;
       });
-      // Stub: Always succeed
-      await Future.delayed(const Duration(seconds: 1));
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-        await showDialog(
-          context: context,
-          builder: (_) => AlertDialog(
-            title: const Text('Signup Successful'),
-            content: const Text('Your account has been created. Please login.'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (_) => const LoginPage()),
-                  );
-                },
-                child: const Text('OK'),
-              ),
-            ],
-          ),
+      try {
+        final response = await http.post(
+          Uri.parse('http://localhost:8500/register'),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            'name': _nameController.text.trim(),
+            'email': _emailController.text.trim(),
+            'password': _passwordController.text.trim(),
+            'bloodGroup': _selectedBloodGroup,
+            'phone': _phoneController.text.trim(),
+            'address': _addressController.text.trim(),
+          }),
         );
+        if (response.statusCode == 201) {
+          if (mounted) {
+            setState(() {
+              _isLoading = false;
+            });
+            await showDialog(
+              context: context,
+              builder: (_) => AlertDialog(
+                title: const Text('Signup Successful'),
+                content:
+                    const Text('Your account has been created. Please login.'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(builder: (_) => const LoginPage()),
+                      );
+                    },
+                    child: const Text('OK'),
+                  ),
+                ],
+              ),
+            );
+          }
+        } else {
+          final errorMsg =
+              jsonDecode(response.body)['message'] ?? 'Signup failed.';
+          if (mounted) {
+            setState(() {
+              _isLoading = false;
+            });
+            await showDialog(
+              context: context,
+              builder: (_) => AlertDialog(
+                title: const Text('Signup Failed'),
+                content: Text(errorMsg),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text('OK'),
+                  ),
+                ],
+              ),
+            );
+          }
+        }
+      } catch (e) {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+          await showDialog(
+            context: context,
+            builder: (_) => AlertDialog(
+              title: const Text('Error'),
+              content: Text('Could not connect to server. Please try again.'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+          );
+        }
       }
-      setState(() {
-        _isLoading = false;
-      });
     }
   }
 

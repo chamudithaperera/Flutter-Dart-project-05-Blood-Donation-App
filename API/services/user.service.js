@@ -12,4 +12,9 @@ async function createUser(userData) {
   return user;
 }
 
-module.exports = { createUser }; 
+// Find user by email and password
+async function findUserByEmailAndPassword(email, password) {
+  return await User.findOne({ email, password });
+}
+
+module.exports = { createUser, findUserByEmailAndPassword }; 
