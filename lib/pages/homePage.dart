@@ -9,7 +9,8 @@ import '../widgets/homePage/secondContainer.dart';
 import '../widgets/homePage/thirdContainer.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final Map<String, dynamic>? user;
+  const HomePage({super.key, this.user});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -84,7 +85,10 @@ class _HomePageState extends State<HomePage> {
                                 ),
                               ),
                               Text(
-                                userData?['name'] ?? 'User Name',
+                                widget.user != null &&
+                                        widget.user!['name'] != null
+                                    ? widget.user!['name']
+                                    : 'User Name',
                                 style: const TextStyle(
                                   fontSize: 24,
                                   fontWeight: FontWeight.w700,
@@ -95,7 +99,7 @@ class _HomePageState extends State<HomePage> {
                         ],
                       ),
                     ),
-                    const FirstContainer(),
+                    FirstContainer(user: widget.user),
                     const SecondContainer(),
                     const ThirdContainer(),
                     const FourthContainer(),

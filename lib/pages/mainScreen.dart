@@ -5,7 +5,8 @@ import 'homePage.dart';
 import 'mapPage.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+  final Map<String, dynamic>? user;
+  const MainScreen({super.key, this.user});
 
   @override
   _MainScreenState createState() => _MainScreenState();
@@ -14,12 +15,18 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
-  final List<Widget> _pages = [
-    const HomePage(),
-    const MapPage(),
-    const HistoryPage(),
-    const AddFilePage(),
-  ];
+  late final List<Widget> _pages;
+
+  @override
+  void initState() {
+    super.initState();
+    _pages = [
+      HomePage(user: widget.user),
+      const MapPage(),
+      const HistoryPage(),
+      const AddFilePage(),
+    ];
+  }
 
   final PageController _pageController = PageController();
 

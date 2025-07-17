@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class FirstContainer extends StatefulWidget {
-  const FirstContainer({super.key});
+  final Map<String, dynamic>? user;
+  const FirstContainer({super.key, this.user});
 
   @override
   State<FirstContainer> createState() => _FirstContainerState();
@@ -164,20 +165,23 @@ class _FirstContainerState extends State<FirstContainer> {
                               ),
                             ],
                           ),
-                          child: const Padding(
-                            padding: EdgeInsets.all(10.0),
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
+                                const Text(
                                   'Blood Group',
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 14),
                                 ),
                                 Text(
-                                  'O+',
-                                  style: TextStyle(
+                                  widget.user != null &&
+                                          widget.user!['bloodGroup'] != null
+                                      ? widget.user!['bloodGroup']
+                                      : 'O+',
+                                  style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 28,
                                       color: Color(0xFFD60033)),

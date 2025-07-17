@@ -4,6 +4,8 @@ import '../widgets/custom_text_field.dart';
 import '../widgets/terms_privacy_section.dart';
 import 'mainScreen.dart';
 import 'signupPage.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -25,22 +27,77 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
+  /// Handles user login by sending email and password to the backend.
+  /// The backend checks the database and only allows login if credentials match.
   Future<void> _handleLogin() async {
     if (_formKey.currentState?.validate() ?? false) {
       setState(() {
         _isLoading = true;
       });
-      // Stub: Always succeed
-      await Future.delayed(const Duration(seconds: 1));
-      if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const MainScreen()),
+      try {
+        // Send email and password to backend
+        final response = await http.post(
+          Uri.parse('http://192.168.8.105:8500/login'),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            'email': _emailController.text.trim(),
+            'password': _passwordController.text.trim(),
+          }),
         );
+        // If credentials match, backend returns 200 and user can login
+        if (response.statusCode == 200) {
+          final user = jsonDecode(response.body)['user'];
+          if (mounted) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MainScreen(user: user),
+              ),
+            );
+          }
+        } else {
+          // If credentials do not match, backend returns error and show dialog
+          final errorMsg =
+              jsonDecode(response.body)['message'] ?? 'Login failed.';
+          if (mounted) {
+            await showDialog(
+              context: context,
+              builder: (_) => AlertDialog(
+                title: const Text('Login Failed'),
+                content: Text(errorMsg),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text('OK'),
+                  ),
+                ],
+              ),
+            );
+          }
+        }
+      } catch (e) {
+        if (mounted) {
+          await showDialog(
+            context: context,
+            builder: (_) => AlertDialog(
+              title: const Text('Error'),
+              content: Text('Could not connect to server. Please try again.'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+          );
+        }
+      } finally {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
       }
-      setState(() {
-        _isLoading = false;
-      });
     }
   }
 

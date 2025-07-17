@@ -56,7 +56,7 @@ class _SignupPageState extends State<SignupPage> {
       });
       try {
         final response = await http.post(
-          Uri.parse('http://localhost:8500/register'),
+          Uri.parse('http://192.168.8.105:8500/register'),
           headers: {'Content-Type': 'application/json'},
           body: jsonEncode({
             'name': _nameController.text.trim(),
