@@ -1,20 +1,8 @@
 import 'package:blood_donation_app/pages/loadingPage.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
 
-void main() async {
-  try {
-    WidgetsFlutterBinding.ensureInitialized();
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-    runApp(const MyApp());
-  } catch (e) {
-    print('Error initializing Firebase: $e');
-    // Still run the app, but it will work in offline mode
-    runApp(const MyApp());
-  }
+void main() {
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {

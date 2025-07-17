@@ -1,7 +1,7 @@
 import 'package:blood_donation_app/widgets/main_Appbar.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+// Removed: import 'package:cloud_firestore/cloud_firestore.dart';
+// Removed: import 'package:firebase_auth/firebase_auth.dart';
 
 class DonationHistory {
   final DateTime dateTime;
@@ -22,47 +22,7 @@ class DonationHistory {
     required this.userId,
   });
 
-  factory DonationHistory.fromFirestore(DocumentSnapshot doc) {
-    try {
-      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-      print('Raw Firestore data: $data'); // Debug print
-
-      // Safely handle the dateTime field
-      DateTime parsedDateTime;
-      try {
-        parsedDateTime = (data['dateTime'] as Timestamp).toDate();
-      } catch (e) {
-        print('Error parsing dateTime: $e');
-        parsedDateTime = DateTime.now();
-      }
-
-      return DonationHistory(
-        dateTime: parsedDateTime,
-        place: data['place']?.toString() ?? 'Unknown',
-        volume: data['volume']?.toString() ?? '0',
-        bloodGroup: data['bloodGroup']?.toString() ?? 'Unknown',
-        isCompleted: data['isCompleted'] ?? false,
-        attempt: (data['attempt'] ?? 1) as int,
-        userId: data['userId']?.toString() ?? '',
-      );
-    } catch (e) {
-      print('Error creating DonationHistory: $e');
-      rethrow;
-    }
-  }
-
-  // Convert DonationHistory object to Firestore document
-  Map<String, dynamic> toFirestore() {
-    return {
-      'dateTime': Timestamp.fromDate(dateTime),
-      'place': place,
-      'volume': volume,
-      'bloodGroup': bloodGroup,
-      'isCompleted': isCompleted,
-      'attempt': attempt,
-      'userId': userId,
-    };
-  }
+  // Removed: fromFirestore and toFirestore methods
 }
 
 class HistoryPage extends StatefulWidget {
@@ -74,111 +34,39 @@ class HistoryPage extends StatefulWidget {
 
 class _HistoryPageState extends State<HistoryPage> {
   final TextEditingController _searchController = TextEditingController();
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  bool _isLoading = true;
+  bool _isLoading = false;
   String? _error;
-  User? _currentUser;
+  // Removed: User? _currentUser;
+
+  // Dummy donation history data
+  final List<DonationHistory> _donations = [
+    DonationHistory(
+      dateTime: DateTime.now(),
+      place: 'Hospital A',
+      volume: '500',
+      bloodGroup: 'O+',
+      isCompleted: true,
+      attempt: 1,
+      userId: 'dummy_user_id',
+    ),
+    DonationHistory(
+      dateTime: DateTime.now().subtract(const Duration(days: 30)),
+      place: 'Hospital B',
+      volume: '450',
+      bloodGroup: 'A-',
+      isCompleted: true,
+      attempt: 2,
+      userId: 'dummy_user_id',
+    ),
+  ];
 
   @override
   void initState() {
     super.initState();
-    _checkAuth();
+    _isLoading = false;
   }
 
-  Future<void> _checkAuth() async {
-    setState(() {
-      _isLoading = true;
-      _error = null;
-    });
-
-    try {
-      // Check authentication status
-      _currentUser = _auth.currentUser;
-
-      if (_currentUser == null) {
-        print('DEBUG: No user is currently logged in');
-        setState(() {
-          _error =
-              'Please log in to view donation history. No user is currently logged in.';
-          _isLoading = false;
-        });
-        return;
-      }
-
-      // Print detailed user information
-      print('DEBUG: Authentication Status');
-      print('User ID: ${_currentUser?.uid}');
-      print('Email: ${_currentUser?.email}');
-      print('Email Verified: ${_currentUser?.emailVerified}');
-      print(
-          'Auth Provider: ${_currentUser?.providerData.map((e) => e.providerId)}');
-
-      // Test Firestore access
-      try {
-        print('DEBUG: Attempting to access Firestore');
-        print(
-            'DEBUG: Querying donations collection for user: ${_currentUser?.uid}');
-
-        // Try to query the donations collection
-        final QuerySnapshot querySnapshot = await _firestore
-            .collection('donations')
-            .where('userId', isEqualTo: _currentUser?.uid)
-            .limit(1)
-            .get();
-
-        print('DEBUG: Query successful');
-        print('DEBUG: Found ${querySnapshot.docs.length} documents');
-
-        setState(() {
-          _isLoading = false;
-        });
-      } catch (firestoreError) {
-        print('DEBUG: Firestore Error Details:');
-        print(firestoreError.toString());
-
-        if (firestoreError is FirebaseException) {
-          print('Error Code: ${firestoreError.code}');
-          print('Error Message: ${firestoreError.message}');
-        }
-
-        setState(() {
-          _error = '''
-Firestore Access Error:
-${firestoreError is FirebaseException ? firestoreError.message : firestoreError}
-
-Please ensure:
-1. You are properly logged in
-2. The 'donations' collection exists
-3. Firestore rules are properly set
-''';
-          _isLoading = false;
-        });
-      }
-    } catch (authError) {
-      print('DEBUG: Authentication Error:');
-      print(authError.toString());
-
-      setState(() {
-        _error = 'Authentication error: $authError';
-        _isLoading = false;
-      });
-    }
-  }
-
-  Stream<QuerySnapshot> _getDonationsStream() {
-    if (_currentUser == null) {
-      print('DEBUG: No user available for stream');
-      return const Stream.empty();
-    }
-
-    print('DEBUG: Creating stream for user: ${_currentUser?.uid}');
-    return _firestore
-        .collection('donations')
-        .where('userId', isEqualTo: _currentUser?.uid)
-        .orderBy('dateTime', descending: true)
-        .snapshots();
-  }
+  // Removed: _checkAuth and _getDonationsStream
 
   @override
   Widget build(BuildContext context) {
@@ -195,125 +83,38 @@ Please ensure:
           ? const Center(child: CircularProgressIndicator())
           : _error != null
               ? Center(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(
-                          Icons.error_outline,
-                          color: Colors.red,
-                          size: 48,
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          _error!,
-                          style: const TextStyle(color: Colors.red),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 16),
-                        ElevatedButton(
-                          onPressed: _checkAuth,
-                          child: const Text('Retry'),
-                        ),
-                      ],
-                    ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(_error!),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            _isLoading = true;
+                            _error = null;
+                          });
+                        },
+                        child: const Text('Retry'),
+                      ),
+                    ],
                   ),
                 )
-              : Column(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      child: TextField(
-                        controller: _searchController,
-                        decoration: InputDecoration(
-                          hintText: 'Search a history',
-                          hintStyle: const TextStyle(color: Colors.grey),
-                          prefixIcon:
-                              const Icon(Icons.search, color: Colors.grey),
-                          filled: true,
-                          fillColor: Colors.white,
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            borderSide: BorderSide(color: Colors.grey.shade300),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            borderSide:
-                                const BorderSide(color: Color(0xFFD60033)),
-                          ),
-                        ),
+              : ListView.builder(
+                  itemCount: _donations.length,
+                  itemBuilder: (context, index) {
+                    final donation = _donations[index];
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: ListTile(
+                        title: Text('Place: ${donation.place}'),
+                        subtitle: Text(
+                            'Volume: ${donation.volume}ml, Blood Group: ${donation.bloodGroup}'),
+                        trailing: Text(
+                            'Date: ${donation.dateTime.toLocal().toString().split(' ')[0]}'),
                       ),
-                    ),
-                    Expanded(
-                      child: StreamBuilder<QuerySnapshot>(
-                        stream: _getDonationsStream(),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasError) {
-                            return Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'Error loading donations:\n${snapshot.error}',
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(color: Colors.red),
-                                  ),
-                                  const SizedBox(height: 16),
-                                  ElevatedButton(
-                                    onPressed: _checkAuth,
-                                    child: const Text('Retry'),
-                                  ),
-                                ],
-                              ),
-                            );
-                          }
-
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          }
-
-                          final docs = snapshot.data?.docs ?? [];
-                          if (docs.isEmpty) {
-                            return const Center(
-                              child: Text('No donation history found'),
-                            );
-                          }
-
-                          return ListView.builder(
-                            padding: const EdgeInsets.all(16),
-                            itemCount: docs.length,
-                            itemBuilder: (context, index) {
-                              try {
-                                final donation =
-                                    DonationHistory.fromFirestore(docs[index]);
-                                return Padding(
-                                  padding: const EdgeInsets.only(bottom: 16),
-                                  child: _buildHistoryCard(
-                                    date:
-                                        '${donation.dateTime.year}-${donation.dateTime.month.toString().padLeft(2, '0')}-${donation.dateTime.day.toString().padLeft(2, '0')}',
-                                    time:
-                                        '${donation.dateTime.hour.toString().padLeft(2, '0')}:${donation.dateTime.minute.toString().padLeft(2, '0')} ${donation.dateTime.hour < 12 ? 'AM' : 'PM'}',
-                                    place: donation.place,
-                                    volume: '${donation.volume} ml',
-                                    bloodGroup: donation.bloodGroup,
-                                    isCompleted: donation.isCompleted,
-                                    attempt: donation.attempt,
-                                  ),
-                                );
-                              } catch (e) {
-                                print('Error building card: $e');
-                                return const SizedBox.shrink();
-                              }
-                            },
-                          );
-                        },
-                      ),
-                    ),
-                  ],
+                    );
+                  },
                 ),
     );
   }

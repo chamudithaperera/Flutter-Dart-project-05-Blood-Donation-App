@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+// Removed: import 'package:firebase_auth/firebase_auth.dart';
+// Removed: import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../widgets/homePage/firstContainer.dart';
 import '../widgets/homePage/fourthContainer.dart';
@@ -16,37 +16,39 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  // Removed: final FirebaseAuth _auth = FirebaseAuth.instance;
+  // Removed: final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   Map<String, dynamic>? userData;
-  bool isLoading = true;
+  bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    _loadUserData();
+    // Stub: No user data loading
+    userData = null;
+    isLoading = false;
   }
 
-  Future<void> _loadUserData() async {
-    try {
-      final User? user = _auth.currentUser;
-      if (user != null) {
-        final DocumentSnapshot doc =
-            await _firestore.collection('users').doc(user.uid).get();
-        if (doc.exists) {
-          setState(() {
-            userData = doc.data() as Map<String, dynamic>;
-            isLoading = false;
-          });
-        }
-      }
-    } catch (e) {
-      print('Error loading user data: $e');
-      setState(() {
-        isLoading = false;
-      });
-    }
-  }
+  // Removed: Future<void> _loadUserData() async {
+  // Removed:   try {
+  // Removed:     final User? user = _auth.currentUser;
+  // Removed:     if (user != null) {
+  // Removed:       final DocumentSnapshot doc =
+  // Removed:           await _firestore.collection('users').doc(user.uid).get();
+  // Removed:       if (doc.exists) {
+  // Removed:         setState(() {
+  // Removed:           userData = doc.data() as Map<String, dynamic>;
+  // Removed:           isLoading = false;
+  // Removed:         });
+  // Removed:       }
+  // Removed:     }
+  // Removed:   } catch (e) {
+  // Removed:     print('Error loading user data: $e');
+  // Removed:     setState(() {
+  // Removed:       isLoading = false;
+  // Removed:     });
+  // Removed:   }
+  // Removed: }
 
   @override
   Widget build(BuildContext context) {

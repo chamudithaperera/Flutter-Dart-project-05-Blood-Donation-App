@@ -4,7 +4,6 @@ import '../widgets/custom_text_field.dart';
 import '../widgets/terms_privacy_section.dart';
 import 'mainScreen.dart';
 import 'signupPage.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -31,70 +30,17 @@ class _LoginPageState extends State<LoginPage> {
       setState(() {
         _isLoading = true;
       });
-      try {
-        print('Starting login process...');
-        await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: _emailController.text.trim(),
-          password: _passwordController.text.trim(),
+      // Stub: Always succeed
+      await Future.delayed(const Duration(seconds: 1));
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const MainScreen()),
         );
-        print('Login successful!');
-        if (mounted) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const MainScreen()),
-          );
-        }
-      } on FirebaseAuthException catch (e) {
-        print('Firebase Auth Error: ${e.code} - ${e.message}');
-        String message;
-        switch (e.code) {
-          case 'user-not-found':
-            message = 'No user found for that email.';
-            break;
-          case 'wrong-password':
-            message = 'Wrong password provided.';
-            break;
-          default:
-            message = e.message ?? 'An error occurred.';
-        }
-        if (mounted) {
-          await showDialog(
-            context: context,
-            builder: (_) => AlertDialog(
-              title: const Text('Login Failed'),
-              content: Text(message),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('OK'),
-                ),
-              ],
-            ),
-          );
-        }
-      } catch (e) {
-        if (mounted) {
-          await showDialog(
-            context: context,
-            builder: (_) => AlertDialog(
-              title: const Text('Error'),
-              content: Text('Error: $e'),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('OK'),
-                ),
-              ],
-            ),
-          );
-        }
-      } finally {
-        if (mounted) {
-          setState(() {
-            _isLoading = false;
-          });
-        }
       }
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 

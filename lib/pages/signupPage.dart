@@ -3,8 +3,8 @@ import '../widgets/custom_button.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/terms_privacy_section.dart';
 import 'loginPage.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+// Removed: import 'package:firebase_auth/firebase_auth.dart';
+// Removed: import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -52,87 +52,34 @@ class _SignupPageState extends State<SignupPage> {
       setState(() {
         _isLoading = true;
       });
-      try {
-        print('Starting signup process...');
-        UserCredential userCredential =
-            await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: _emailController.text.trim(),
-          password: _passwordController.text.trim(),
-        );
-        print('Firebase Auth successful, updating display name...');
-        await userCredential.user
-            ?.updateDisplayName(_nameController.text.trim());
-
-        print('Saving user data to Firestore...');
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(userCredential.user!.uid)
-            .set({
-          'name': _nameController.text.trim(),
-          'email': _emailController.text.trim(),
-          'phone': _phoneController.text.trim(),
-          'address': _addressController.text.trim(),
-          'bloodGroup': _selectedBloodGroup,
-          'createdAt': FieldValue.serverTimestamp(),
+      // Stub: Always succeed
+      await Future.delayed(const Duration(seconds: 1));
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
         });
-        print('User data saved successfully!');
-        if (mounted) {
-          setState(() {
-            _isLoading = false;
-          });
-          await showDialog(
-            context: context,
-            builder: (_) => AlertDialog(
-              title: const Text('Signup Successful'),
-              content:
-                  const Text('Your account has been created. Please login.'),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (_) => const LoginPage()),
-                    );
-                  },
-                  child: const Text('OK'),
-                ),
-              ],
-            ),
-          );
-        }
-      } on FirebaseAuthException catch (e) {
-        String message;
-        switch (e.code) {
-          case 'weak-password':
-            message = 'Password is too weak.';
-            break;
-          case 'email-already-in-use':
-            message = 'An account already exists for that email.';
-            break;
-          case 'invalid-email':
-            message = 'Invalid email address.';
-            break;
-          default:
-            message = e.message ?? 'An error occurred.';
-        }
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(message), backgroundColor: Colors.red),
-          );
-        }
-      } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
-          );
-        }
-      } finally {
-        if (mounted) {
-          setState(() {
-            _isLoading = false;
-          });
-        }
+        await showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: const Text('Signup Successful'),
+            content: const Text('Your account has been created. Please login.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (_) => const LoginPage()),
+                  );
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
       }
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
