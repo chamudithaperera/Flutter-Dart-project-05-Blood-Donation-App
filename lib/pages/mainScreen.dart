@@ -3,6 +3,7 @@ import 'addFilePage.dart';
 import 'historyPage.dart';
 import 'homePage.dart';
 import 'mapPage.dart';
+import 'profilePage.dart';
 
 class MainScreen extends StatefulWidget {
   final Map<String, dynamic>? user;
@@ -39,6 +40,17 @@ class _MainScreenState extends State<MainScreen> {
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
     );
+  }
+
+  void _goToProfilePage() {
+    if (widget.user != null && widget.user!['email'] != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ProfilePage(email: widget.user!['email']),
+        ),
+      );
+    }
   }
 
   @override

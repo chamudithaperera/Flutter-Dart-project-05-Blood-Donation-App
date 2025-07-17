@@ -38,31 +38,10 @@ class _HistoryPageState extends State<HistoryPage> {
   String? _error;
   // Removed: User? _currentUser;
 
-  // Dummy donation history data
-  final List<DonationHistory> _donations = [
-    DonationHistory(
-      dateTime: DateTime.now(),
-      place: 'Hospital A',
-      volume: '500',
-      bloodGroup: 'O+',
-      isCompleted: true,
-      attempt: 1,
-      userId: 'dummy_user_id',
-    ),
-    DonationHistory(
-      dateTime: DateTime.now().subtract(const Duration(days: 30)),
-      place: 'Hospital B',
-      volume: '450',
-      bloodGroup: 'A-',
-      isCompleted: true,
-      attempt: 2,
-      userId: 'dummy_user_id',
-    ),
-  ];
-
   @override
   void initState() {
     super.initState();
+    // No auth check
     _isLoading = false;
   }
 
@@ -77,44 +56,150 @@ class _HistoryPageState extends State<HistoryPage> {
         shadowColor: Colors.black.withOpacity(0.3),
         leading: appBarLeading,
         title: appBarText,
-        actions: getAppBarActions(context),
+        actions: getAppBarActions(context, email: ''),
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _error != null
               ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(_error!),
-                      const SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            _isLoading = true;
-                            _error = null;
-                          });
-                        },
-                        child: const Text('Retry'),
-                      ),
-                    ],
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.error_outline,
+                          color: Colors.red,
+                          size: 48,
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          _error!,
+                          style: const TextStyle(color: Colors.red),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: () {
+                            // Stub for retry logic
+                            setState(() {
+                              _isLoading = true;
+                              _error = null;
+                            });
+                          },
+                          child: const Text('Retry'),
+                        ),
+                      ],
+                    ),
                   ),
                 )
-              : ListView.builder(
-                  itemCount: _donations.length,
-                  itemBuilder: (context, index) {
-                    final donation = _donations[index];
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 16),
-                      child: ListTile(
-                        title: Text('Place: ${donation.place}'),
-                        subtitle: Text(
-                            'Volume: ${donation.volume}ml, Blood Group: ${donation.bloodGroup}'),
-                        trailing: Text(
-                            'Date: ${donation.dateTime.toLocal().toString().split(' ')[0]}'),
+              : Column(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      child: TextField(
+                        controller: _searchController,
+                        decoration: InputDecoration(
+                          hintText: 'Search a history',
+                          hintStyle: const TextStyle(color: Colors.grey),
+                          prefixIcon:
+                              const Icon(Icons.search, color: Colors.grey),
+                          filled: true,
+                          fillColor: Colors.white,
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: BorderSide(color: Colors.grey.shade300),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide:
+                                const BorderSide(color: Color(0xFFD60033)),
+                          ),
+                        ),
                       ),
-                    );
-                  },
+                    ),
+                    Expanded(
+                      child: StreamBuilder(
+                        stream: const Stream.empty(), // Stub stream
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) {
+                            return Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Error loading donations:\n${snapshot.error}',
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(color: Colors.red),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      // Stub for retry logic
+                                      setState(() {
+                                        _isLoading = true;
+                                        _error = null;
+                                      });
+                                    },
+                                    child: const Text('Retry'),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+
+                          final docs = snapshot.data?.docs ?? [];
+                          if (docs.isEmpty) {
+                            return const Center(
+                              child: Text('No donation history found'),
+                            );
+                          }
+
+                          return ListView.builder(
+                            padding: const EdgeInsets.all(16),
+                            itemCount: docs.length,
+                            itemBuilder: (context, index) {
+                              try {
+                                final donation = DonationHistory(
+                                  dateTime: DateTime.now(), // Stub date
+                                  place: 'Hospital A', // Stub place
+                                  volume: '500', // Stub volume
+                                  bloodGroup: 'O+', // Stub blood group
+                                  isCompleted: true, // Stub completion
+                                  attempt: 1, // Stub attempt
+                                  userId: 'dummy_user_id', // Stub user ID
+                                );
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 16),
+                                  child: _buildHistoryCard(
+                                    date:
+                                        '${donation.dateTime.year}-${donation.dateTime.month.toString().padLeft(2, '0')}-${donation.dateTime.day.toString().padLeft(2, '0')}',
+                                    time:
+                                        '${donation.dateTime.hour.toString().padLeft(2, '0')}:${donation.dateTime.minute.toString().padLeft(2, '0')} ${donation.dateTime.hour < 12 ? 'AM' : 'PM'}',
+                                    place: donation.place,
+                                    volume: '${donation.volume} ml',
+                                    bloodGroup: donation.bloodGroup,
+                                    isCompleted: donation.isCompleted,
+                                    attempt: donation.attempt,
+                                  ),
+                                );
+                              } catch (e) {
+                                print('Error building card: $e');
+                                return const SizedBox.shrink();
+                              }
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ],
                 ),
     );
   }

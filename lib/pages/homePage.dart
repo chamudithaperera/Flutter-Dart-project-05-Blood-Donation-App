@@ -59,7 +59,7 @@ class _HomePageState extends State<HomePage> {
           elevation: 0,
           leading: appBarLeading,
           title: appBarText,
-          actions: getAppBarActions(context),
+          actions: getAppBarActions(context, email: ''),
         ),
         body: isLoading
             ? const Center(child: CircularProgressIndicator())

@@ -1,4 +1,5 @@
 const { createUser, findUserByEmailAndPassword } = require('../services/user.service');
+const User = require('../models/user.model');
 
 async function registerUser(req, res) {
   try {
@@ -33,4 +34,21 @@ async function loginUser(req, res) {
   }
 }
 
-module.exports = { registerUser, loginUser }; 
+// Get user by email
+async function getUserByEmail(req, res) {
+  try {
+    const { email } = req.query;
+    if (!email) {
+      return res.status(400).json({ message: 'Email is required.' });
+    }
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+    res.status(200).json({ user });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+}
+
+module.exports = { registerUser, loginUser, getUserByEmail }; 

@@ -16,7 +16,7 @@ Widget appBarText = const Text(
       color: Color(0xffD60033), fontWeight: FontWeight.w700, fontSize: 25),
 );
 
-List<Widget> getAppBarActions(BuildContext context) {
+List<Widget> getAppBarActions(BuildContext context, {required String email}) {
   return [
     Padding(
       padding: const EdgeInsets.all(10.0),
@@ -24,7 +24,10 @@ List<Widget> getAppBarActions(BuildContext context) {
         onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const ProfilePage()),
+            MaterialPageRoute(
+                builder: (context) => const ProfilePage(
+                      email: '',
+                    )),
           );
         },
         child: const Icon(

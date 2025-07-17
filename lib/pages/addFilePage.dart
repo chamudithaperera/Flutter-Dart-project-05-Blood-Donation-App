@@ -12,7 +12,7 @@ class AddFilePage extends StatelessWidget {
         elevation: 0,
         leading: appBarLeading,
         title: appBarText,
-        actions: getAppBarActions(context),
+        actions: getAppBarActions(context, email: ''),
       ),
     );
   }
